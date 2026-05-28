@@ -16,6 +16,11 @@ return new class extends Migration
             return;
         }
 
+        // Check if level column already exists
+        if (Schema::hasColumn('assessment_levels', 'level')) {
+            return;
+        }
+
         Schema::table('assessment_levels', function (Blueprint $table) {
             $table->unsignedSmallInteger('level')->nullable()->after('id');
         });

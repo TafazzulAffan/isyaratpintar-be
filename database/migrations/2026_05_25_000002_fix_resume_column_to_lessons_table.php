@@ -12,9 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('lessons', function (Blueprint $table) {
-            // Drop the wrong column and add the correct one
-            $table->dropColumn('resume_url');
-            $table->longText('resume')->nullable();
+            // Drop the wrong column if it exists
+            if (Schema::hasColumn('lessons', 'resume_url')) {
+                $table->dropColumn('resume_url');
+            }
+            // Add the correct column if it doesn't exist
+            if (!Schema::hasColumn('lessons', 'resume')) {
+                $table->longText('resume')->nullable();
+            }
         });
     }
 

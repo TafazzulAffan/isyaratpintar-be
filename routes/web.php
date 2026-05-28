@@ -14,7 +14,7 @@ Route::get('/', function () {
 });
 
 // API Documentation Routes
-Route::prefix('docs')->group(function () {
+Route::prefix('swagger/docsapi')->group(function () {
     Route::get('/', [DocumentationController::class, 'swagger'])->name('docs.swagger');
     Route::get('/api-docs.json', [DocumentationController::class, 'openapi'])->name('api.openapi');
 });

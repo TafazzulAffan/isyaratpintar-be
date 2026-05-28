@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         // Drop foreign key constraint first
-        Schema::table('attempt_answers', function (Blueprint $table) {
-            $table->dropForeign(['selected_option_id']);
-            $table->dropColumn('selected_option_id');
-        });
+        if (Schema::hasColumn('attempt_answers', 'selected_option_id')) {
+            Schema::table('attempt_answers', function (Blueprint $table) {
+                $table->dropForeign(['selected_option_id']);
+                $table->dropColumn('selected_option_id');
+            });
+        }
 
         // Drop existing options table
         Schema::dropIfExists('options');
@@ -34,10 +36,12 @@ return new class extends Migration
         });
 
         // Add new selected_option_id column with UUID type
-        Schema::table('attempt_answers', function (Blueprint $table) {
-            $table->uuid('selected_option_id')->nullable()->after('question_id');
-            $table->foreign('selected_option_id')->references('id')->on('options')->onDelete('cascade');
-        });
+        if (!Schema::hasColumn('attempt_answers', 'selected_option_id')) {
+            Schema::table('attempt_answers', function (Blueprint $table) {
+                $table->uuid('selected_option_id')->nullable()->after('question_id');
+                $table->foreign('selected_option_id')->references('id')->on('options')->onDelete('cascade');
+            });
+        }
     }
 
     /**
@@ -46,9 +50,13 @@ return new class extends Migration
     public function down(): void
     {
         // Drop foreign key constraint first
-        Schema::table('attempt_answers', function (Blueprint $table) {
-            $table->dropForeign(['selected_option_id']);
-        });
+        if (Schema::hasColumn('attempt_answers', 'selected_option_id')) {
+            Schema::table('attempt_answers', function (Blueprint $table) {
+                if (Schema::hasForeignKey('attempt_answers', 'attempt_answers_selected_option_id_foreign')) {
+                    $table->dropForeign(['selected_option_id']);
+                }
+            });
+        }
 
         // Drop options table
         Schema::dropIfExists('options');
@@ -67,8 +75,13 @@ return new class extends Migration
         });
 
         // Restore attempt_answers with original foreign key
+        if (Schema::hasColumn('attempt_answers', 'selected_option_id')) {
+            Schema::table('attempt_answers', function (Blueprint $table) {
+                $table->dropColumn('selected_option_id');
+            });
+        }
+        
         Schema::table('attempt_answers', function (Blueprint $table) {
-            $table->dropColumn('selected_option_id');
             $table->foreignId('selected_option_id')->after('question_id')->constrained('options')->onDelete('cascade');
         });
     }
