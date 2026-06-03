@@ -21,6 +21,17 @@ class AssessmentService
     }
 
     /**
+     * Get assessments filtered by mata_pelajaran id
+     */
+    public function getAssessmentsByMataPelajaranId(int $id): LengthAwarePaginator
+    {
+        return Assessment::withCount('questions')
+            ->where('mata_pelajaran_id', $id)
+            ->latest()
+            ->paginate(15);
+    }
+
+    /**
      * Get assessment by slug with questions and options
      */
     public function getAssessmentBySlug(string $slug): ?Assessment

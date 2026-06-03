@@ -31,9 +31,9 @@ class PblCaseUserController extends Controller
      *         @OA\Schema(type="integer", default=1)
      *     ),
      *     @OA\Parameter(
-     *         name="pbl_level_id",
+     *         name="mata_pelajaran_id",
      *         in="query",
-     *         description="Filter by PBL level ID",
+     *         description="Filter by mata pelajaran ID",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
@@ -52,7 +52,7 @@ class PblCaseUserController extends Controller
      *                 @OA\Property(property="start_date", type="string", format="date-time"),
      *                 @OA\Property(property="deadline", type="string", format="date-time"),
      *                 @OA\Property(property="status", type="string", enum={"not-started","in-progress","completed","late"}),
-     *                 @OA\Property(property="pbl_level", type="object"),
+     *                 @OA\Property(property="mata_pelajaran", type="object"),
      *             )),
      *             @OA\Property(property="pagination", type="object"),
      *         )
@@ -64,12 +64,12 @@ class PblCaseUserController extends Controller
     {
         $user = auth()->user();
         
-        $query = PblCase::with('level')
+        $query = PblCase::with('mataPelajaran')
             ->orderBy('start_date', 'asc');
 
-        // Filter by level if provided
-        if (request()->has('level_id')) {
-            $query->where('level_id', request()->input('level_id'));
+        // Filter by mata_pelajaran if provided
+        if (request()->has('mata_pelajaran_id')) {
+            $query->where('mata_pelajaran_id', request()->input('mata_pelajaran_id'));
         }
 
         $cases = $query->paginate(15);
@@ -134,7 +134,41 @@ class PblCaseUserController extends Controller
      */
     public function show(PblCase $pblCase): JsonResponse
     {
-        $pblCase->load('level', 'sections.items');
+        $pblCase->load('mataPelajaran', 'sections.items');
         return response()->json(new PblCaseDetailResource($pblCase));
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/pbl-cases/mata-pelajaran/{id}",
+     *     operationId="getPblCasesByMataPelajaran",
+     *     tags={"PBL Cases"},
+     *     summary="List PBL cases by mata pelajaran",
+     *     description="Retrieve paginated PBL cases filtered by mata pelajaran ID",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Mata pelajaran ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="List of PBL cases filtered by mata pelajaran")
+     * )
+     */
+    public function byMataPelajaran(int $id): JsonResponse
+    {
+        $user = auth()->user();
+
+        $cases = PblCase::with('mataPelajaran')
+            ->where('mata_pelajaran_id', $id)
+            ->orderBy('start_date', 'asc')
+            ->paginate(15);
+
+        $cases->getCollection()->transform(function ($case) use ($user) {
+            return (new PblCaseResource($case))->setUser($user);
+        });
+
+        return response()->json($cases);
     }
 }

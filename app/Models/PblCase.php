@@ -17,7 +17,7 @@ class PblCase extends Model
         'slug',
         'case_number',
         'title',
-        'pbl_level_id',
+        'mata_pelajaran_id',
         'description',
         'image_url',
         'time_limit',
@@ -32,11 +32,11 @@ class PblCase extends Model
     ];
 
     /**
-     * Get the PBL level that owns the case
+     * Get the MataPelajaran that owns the case
      */
-    public function level(): BelongsTo
+    public function mataPelajaran(): BelongsTo
     {
-        return $this->belongsTo(PblLevel::class, 'pbl_level_id');
+        return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id');
     }
 
     /**

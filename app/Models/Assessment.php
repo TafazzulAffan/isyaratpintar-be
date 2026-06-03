@@ -16,16 +16,16 @@ class Assessment extends Model
         'description',
         'time_limit',
         'level',
-        'assessment_level_id',
+        'mata_pelajaran_id',
     ];
 
     protected $casts = [
         'level' => 'integer',
     ];
 
-    public function assessmentLevel(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function mataPelajaran(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(AssessmentLevel::class, 'assessment_level_id');
+        return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id');
     }
 
     // Relationships

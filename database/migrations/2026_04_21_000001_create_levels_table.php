@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('levels', function (Blueprint $table) {
+        Schema::create('mata_pelajarans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('level_number')->unique();
-            $table->string('name')->nullable(); // Name for materi levels
+            $table->string('name')->unique(); // Name for learning subjects
             $table->timestamps();
-
-            $table->index('level_number');
         });
     }
 
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('levels');
+        Schema::dropIfExists('mata_pelajarans');
     }
 };

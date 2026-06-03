@@ -4,24 +4,15 @@ use App\Http\Controllers\Api\Admin\CaseSectionController;
 use App\Http\Controllers\Api\Admin\CaseSectionItemController;
 use App\Http\Controllers\Api\Admin\ImageUploadController;
 use App\Http\Controllers\Api\Admin\PblCaseController;
-use App\Http\Controllers\Api\Admin\PblLevelController;
 use App\Http\Controllers\Api\User\CaseSubmissionController;
 use App\Http\Controllers\Api\User\PblCaseUserController;
 use Illuminate\Support\Facades\Route;
 
 // All authenticated routes (authorization check in controller)
 Route::middleware('auth:sanctum')->group(function () {
-    // PBL Levels - All users can GET
-    Route::get('/pbl-levels', [PblLevelController::class, 'index']);
-    Route::get('/pbl-levels/{pblLevel}', [PblLevelController::class, 'show']);
-    
-    // PBL Levels CRUD - Only admin
-    Route::post('/pbl-levels', [PblLevelController::class, 'store']);
-    Route::put('/pbl-levels/{pblLevel}', [PblLevelController::class, 'update']);
-    Route::delete('/pbl-levels/{pblLevel}', [PblLevelController::class, 'destroy']);
-
     // PBL Cases - All users can GET
     Route::get('/pbl-cases', [PblCaseUserController::class, 'index']);
+    Route::get('/pbl-cases/mata-pelajaran/{id}', [PblCaseUserController::class, 'byMataPelajaran']);
     Route::get('/pbl-cases/{pblCase}', [PblCaseUserController::class, 'show']);
     
     // PBL Cases CRUD - Only admin/guru

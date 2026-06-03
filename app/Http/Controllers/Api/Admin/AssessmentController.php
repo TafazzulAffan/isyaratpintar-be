@@ -27,9 +27,9 @@ class AssessmentController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-    *             required={"slug","assessment_level_id","title","time_limit"},
+    *             required={"slug","mata_pelajaran_id","title","time_limit"},
      *             @OA\Property(property="slug", type="string", example="math-quiz-2024", description="Unique slug for the assessment"),
-     *             @OA\Property(property="assessment_level_id", type="integer", example=1, description="Assessment level ID - the assessment will be grouped under this level"),
+     *             @OA\Property(property="mata_pelajaran_id", type="integer", example=1, description="Mata pelajaran ID - the assessment will be grouped under this subject"),
      *             @OA\Property(property="title", type="string", example="Math Quiz 2024", description="Assessment title"),
      *             @OA\Property(property="description", type="string", nullable=true, example="A comprehensive mathematics assessment", description="Assessment description"),
      *             @OA\Property(property="time_limit", type="integer", example=60, description="Time limit in minutes")
@@ -95,7 +95,7 @@ class AssessmentController extends Controller
      *         required=true,
      *         @OA\JsonContent(
     *             @OA\Property(property="slug", type="string", nullable=true, example="math-quiz-2024-updated", description="Updated slug"),
-    *             @OA\Property(property="assessment_level_id", type="integer", nullable=true, description="Assessment level ID - the assessment will be grouped under this level"),
+    *             @OA\Property(property="mata_pelajaran_id", type="integer", nullable=true, description="Mata pelajaran ID - the assessment will be grouped under this subject"),
     *             @OA\Property(property="title", type="string", nullable=true, example="Math Quiz 2024 Updated", description="Updated title"),
     *             @OA\Property(property="description", type="string", nullable=true, example="Updated description", description="Updated description"),
     *             @OA\Property(property="time_limit", type="integer", nullable=true, example=90, description="Updated time limit in minutes")

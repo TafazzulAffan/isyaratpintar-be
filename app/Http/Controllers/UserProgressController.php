@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MarkLessonCompletedRequest;
-use App\Http\Resources\LevelResource;
+use App\Http\Resources\MataPelajaranResource;
 use App\Services\UserProgressService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -62,7 +62,7 @@ class UserProgressController extends Controller
      * @OA\Get(
      *     path="/my-progress",
      *     summary="Get user's progress",
-     *     description="Retrieve the authenticated user's overall progress including completed lessons and levels.",
+     *     description="Retrieve the authenticated user's overall progress including completed lessons and mata_pelajarans.",
      *     tags={"User Progress"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
@@ -73,7 +73,7 @@ class UserProgressController extends Controller
      *             @OA\Property(property="totalLessons", type="integer"),
      *             @OA\Property(property="completedLessons", type="integer"),
      *             @OA\Property(property="progressPercentage", type="number", format="float"),
-     *             @OA\Property(property="levels", type="array", @OA\Items(type="object"))
+     *             @OA\Property(property="mataPelajarans", type="array", @OA\Items(type="object"))
      *         )
      *     ),
      *     @OA\Response(response=401, description="Unauthorized")
@@ -88,7 +88,7 @@ class UserProgressController extends Controller
             'totalLessons' => $progress['totalLessons'],
             'completedLessons' => $progress['completedLessons'],
             'progressPercentage' => $progress['progressPercentage'],
-            'levels' => LevelResource::collection($progress['levels'])->resolve(),
+            'mataPelajarans' => MataPelajaranResource::collection($progress['mataPelajarans'])->resolve(),
         ]);
     }
 }

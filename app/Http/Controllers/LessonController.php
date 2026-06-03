@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\GetLessonsByLevelRequest;
+use App\Http\Requests\GetLessonsByMataPelajaranRequest;
 use App\Http\Requests\StoreLessonRequest;
 use App\Http\Requests\UpdateLessonRequest;
 use App\Http\Requests\UpdateLessonResumeRequest;
@@ -133,38 +133,38 @@ class LessonController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/lessons/by-level/{level}",
-     *     summary="Get lessons by level",
-     *     description="Retrieve all lessons for a specific level.",
+     *     path="/lessons/by-mata-pelajaran/{mataPelajaran}",
+     *     summary="Get lessons by mata pelajaran",
+     *     description="Retrieve all lessons for a specific mata pelajaran (subject).",
      *     tags={"Lessons"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
-     *         name="level",
+     *         name="mataPelajaran",
      *         in="path",
      *         required=true,
-     *         description="Level number",
+     *         description="Mata pelajaran number",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Lessons by level",
+     *         description="Lessons by mata pelajaran",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Lessons by level retrieved successfully"),
+     *             @OA\Property(property="message", type="string", example="Lessons by mata pelajaran retrieved successfully"),
      *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
      *         )
      *     ),
      *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Level not found")
+     *     @OA\Response(response=404, description="Mata pelajaran not found")
      * )
      */
-    public function byLevel(GetLessonsByLevelRequest $request, int $level): JsonResponse
+    public function byMataPelajaran(GetLessonsByMataPelajaranRequest $request, int $mataPelajaran): JsonResponse
     {
-        $lessons = $this->lessonService->getLessonsByLevelNumber($level, $request->user());
+        $lessons = $this->lessonService->getLessonsByMataPelajaranId($mataPelajaran, $request->user());
 
         return $this->successResponse(
             LessonResource::collection($lessons),
-            'Lessons by level retrieved successfully'
+            'Lessons by mata pelajaran retrieved successfully'
         );
     }
 

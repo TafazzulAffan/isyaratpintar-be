@@ -66,6 +66,38 @@ class AssessmentController extends Controller
 
     /**
      * @OA\Get(
+     *     path="/assessments/mata-pelajaran/{id}",
+     *     summary="Get assessments filtered by mata pelajaran",
+     *     tags={"Assessments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Mata pelajaran ID"
+     *     ),
+     *     @OA\Response(response=200, description="List of assessments filtered by mata pelajaran")
+     * )
+     */
+    public function byMataPelajaran(int $id): JsonResponse
+    {
+        $assessments = $this->assessmentService->getAssessmentsByMataPelajaranId($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => AssessmentResource::collection($assessments->items()),
+            'pagination' => [
+                'total' => $assessments->total(),
+                'count' => $assessments->count(),
+                'per_page' => $assessments->perPage(),
+                'current_page' => $assessments->currentPage(),
+                'last_page' => $assessments->lastPage(),
+            ],
+        ]);
+    }
+
+    /**
+     * @OA\Get(
      *     path="/assessments/{slug}",
      *     summary="Get assessment detail with questions",
      *     description="Retrieve detailed assessment with all questions and options. Note: is_correct field is NOT included to prevent answer leakage.",

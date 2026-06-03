@@ -32,10 +32,10 @@ class PblCaseController extends Controller
      *         required=true,
      *         description="PBL case data",
      *         @OA\JsonContent(
-     *             required={"case_number","title","pbl_level_id","description","start_date","deadline"},
+     *             required={"case_number","title","mata_pelajaran_id","description","start_date","deadline"},
      *             @OA\Property(property="case_number", type="integer", example=1),
      *             @OA\Property(property="title", type="string", example="System Login Bermasalah"),
-     *             @OA\Property(property="pbl_level_id", type="integer", example=1),
+     *             @OA\Property(property="mata_pelajaran_id", type="integer", example=1),
      *             @OA\Property(property="description", type="string", example="Anda diminta untuk menyelesaikan..."),
      *             @OA\Property(property="time_limit", type="integer", example=120),
      *             @OA\Property(property="start_date", type="string", format="date-time"),
@@ -77,7 +77,7 @@ class PblCaseController extends Controller
 
         return response()->json([
             'message' => 'PBL case created successfully',
-            'data' => new PblCaseDetailResource($case->load('level', 'sections')),
+            'data' => new PblCaseDetailResource($case->load('mataPelajaran', 'sections')),
         ], Response::HTTP_CREATED);
     }
 
@@ -101,7 +101,7 @@ class PblCaseController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="title", type="string"),
      *             @OA\Property(property="description", type="string"),
-     *             @OA\Property(property="pbl_level_id", type="integer"),
+     *             @OA\Property(property="mata_pelajaran_id", type="integer"),
      *             @OA\Property(property="deadline", type="string", format="date-time"),
      *         )
      *     ),
@@ -130,7 +130,7 @@ class PblCaseController extends Controller
 
         return response()->json([
             'message' => 'PBL case updated successfully',
-            'data' => new PblCaseDetailResource($pblCase->load('level', 'sections')),
+            'data' => new PblCaseDetailResource($pblCase->load('mataPelajaran', 'sections')),
         ]);
     }
 

@@ -28,13 +28,13 @@ class PblCaseResource extends JsonResource
             'slug' => $this->slug,
             'case_number' => $this->case_number,
             'title' => $this->title,
-            'pbl_level_id' => $this->pbl_level_id,
+            'mata_pelajaran_id' => $this->mata_pelajaran_id,
             'description' => $this->description,
             'image_url' => $this->image_url,
             'time_limit' => $this->time_limit,
             'start_date' => $this->start_date,
             'deadline' => $this->deadline,
-            'pbl_level' => new PblLevelResource($this->whenLoaded('level')),
+            'mata_pelajaran' => new MataPelajaranResource($this->whenLoaded('mataPelajaran')),
         ];
 
         // Add status if user is provided or in request context

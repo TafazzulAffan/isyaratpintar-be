@@ -36,7 +36,7 @@ class StorePblCaseRequest extends FormRequest
         return [
             'case_number' => 'required|integer|unique:pbl_cases',
             'title' => 'required|string|max:255',
-            'pbl_level_id' => 'required|integer|exists:pbl_levels,id',
+            'mata_pelajaran_id' => 'required|integer|exists:mata_pelajarans,id',
             'description' => 'required|string',
             'image_url' => 'nullable|url',
             'time_limit' => 'nullable|integer|min:0',

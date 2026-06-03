@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Level;
+use App\Models\MataPelajaran;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +15,7 @@ class Lesson extends Model
     use HasFactory;
 
     protected $fillable = [
-        'level_id',
+        'mata_pelajaran_id',
         'slug',
         'title',
         'description',
@@ -47,9 +47,9 @@ class Lesson extends Model
         return $slug;
     }
 
-    public function level(): BelongsTo
+    public function mataPelajaran(): BelongsTo
     {
-        return $this->belongsTo(Level::class);
+        return $this->belongsTo(MataPelajaran::class);
     }
 
     public function users(): BelongsToMany

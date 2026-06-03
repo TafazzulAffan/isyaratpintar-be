@@ -106,7 +106,7 @@
                             "schema": {
                                 "required": [
                                     "slug",
-                                    "assessment_level_id",
+                                    "mata_pelajaran_id",
                                     "title",
                                     "time_limit"
                                 ],
@@ -116,8 +116,8 @@
                                         "type": "string",
                                         "example": "math-quiz-2024"
                                     },
-                                    "assessment_level_id": {
-                                        "description": "Assessment level ID - the assessment will be grouped under this level",
+                                    "mata_pelajaran_id": {
+                                        "description": "Mata pelajaran ID - the assessment will be grouped under this subject",
                                         "type": "integer",
                                         "example": 1
                                     },
@@ -244,8 +244,8 @@
                                         "example": "math-quiz-2024-updated",
                                         "nullable": true
                                     },
-                                    "assessment_level_id": {
-                                        "description": "Assessment level ID - the assessment will be grouped under this level",
+                                    "mata_pelajaran_id": {
+                                        "description": "Mata pelajaran ID - the assessment will be grouped under this subject",
                                         "type": "integer",
                                         "nullable": true
                                     },
@@ -395,438 +395,6 @@
                     },
                     "404": {
                         "description": "Assessment not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/assessment-levels": {
-            "get": {
-                "tags": [
-                    "Assessment Levels"
-                ],
-                "summary": "List assessment levels with assessments",
-                "description": "Retrieve all assessment levels with all assessments that belong to each level, ordered by level number",
-                "operationId": "a48f21c2a49658238a2446b5a05b717e",
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved assessment levels with assessments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "level_number": {
-                                                        "description": "Numeric level identifier",
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "description": {
-                                                        "description": "Description of assessment level",
-                                                        "type": "string",
-                                                        "nullable": true
-                                                    },
-                                                    "assessments": {
-                                                        "type": "array",
-                                                        "items": {
-                                                            "properties": {
-                                                                "id": {
-                                                                    "type": "integer"
-                                                                },
-                                                                "slug": {
-                                                                    "type": "string"
-                                                                },
-                                                                "title": {
-                                                                    "type": "string"
-                                                                },
-                                                                "description": {
-                                                                    "type": "string",
-                                                                    "nullable": true
-                                                                },
-                                                                "time_limit": {
-                                                                    "type": "integer"
-                                                                },
-                                                                "total_questions": {
-                                                                    "type": "integer"
-                                                                },
-                                                                "created_at": {
-                                                                    "type": "string",
-                                                                    "format": "date-time"
-                                                                },
-                                                                "updated_at": {
-                                                                    "type": "string",
-                                                                    "format": "date-time"
-                                                                }
-                                                            },
-                                                            "type": "object"
-                                                        }
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Assessment Levels"
-                ],
-                "summary": "Create assessment level",
-                "description": "Create a new assessment level with unique level number",
-                "operationId": "fdf2a098dc67e4a3db5fc4a47d65422d",
-                "requestBody": {
-                    "description": "Assessment level data",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "level_number"
-                                ],
-                                "properties": {
-                                    "level_number": {
-                                        "description": "Unique numeric level identifier (must be positive)",
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "description": {
-                                        "description": "Description of assessment level",
-                                        "type": "string",
-                                        "nullable": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Assessment level created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer"
-                                                },
-                                                "level_number": {
-                                                    "type": "integer"
-                                                },
-                                                "description": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation failed - level_number must be unique and positive"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/assessment-levels/{id}": {
-            "get": {
-                "tags": [
-                    "Assessment Levels"
-                ],
-                "summary": "Get assessment level with assessments",
-                "description": "Retrieve a specific assessment level with all assessments that belong to this level",
-                "operationId": "46eceee47f09bf2e6295e0852a47c24d",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Assessment level ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved assessment level with assessments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "level_number": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "description": {
-                                                    "description": "Description of assessment level",
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "assessments": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer"
-                                                            },
-                                                            "slug": {
-                                                                "type": "string"
-                                                            },
-                                                            "title": {
-                                                                "type": "string"
-                                                            },
-                                                            "description": {
-                                                                "type": "string",
-                                                                "nullable": true
-                                                            },
-                                                            "time_limit": {
-                                                                "type": "integer"
-                                                            },
-                                                            "total_questions": {
-                                                                "type": "integer"
-                                                            },
-                                                            "created_at": {
-                                                                "type": "string",
-                                                                "format": "date-time"
-                                                            },
-                                                            "updated_at": {
-                                                                "type": "string",
-                                                                "format": "date-time"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Assessment level not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Assessment Levels"
-                ],
-                "summary": "Update assessment level",
-                "description": "Update an existing assessment level by ID",
-                "operationId": "f965c2dc6c53a252174eb58692ae69dc",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Assessment level ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "description": "Assessment level data to update",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "level_number": {
-                                        "description": "Numeric level identifier (must be positive and unique)",
-                                        "type": "integer",
-                                        "nullable": true
-                                    },
-                                    "description": {
-                                        "description": "Description of assessment level",
-                                        "type": "string",
-                                        "nullable": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Assessment level updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer"
-                                                },
-                                                "level_number": {
-                                                    "type": "integer"
-                                                },
-                                                "description": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Assessment level not found"
-                    },
-                    "422": {
-                        "description": "Validation failed - level_number must be unique and positive"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Assessment Levels"
-                ],
-                "summary": "Delete assessment level",
-                "description": "Delete an assessment level by ID",
-                "operationId": "a126f3058192674b3de4fd996ac6921c",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Assessment level ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Assessment level deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Level deleted"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Assessment level not found"
                     }
                 },
                 "security": [
@@ -1675,9 +1243,9 @@
                         }
                     },
                     {
-                        "name": "pbl_level_id",
+                        "name": "mata_pelajaran_id",
                         "in": "query",
-                        "description": "Filter by PBL level ID",
+                        "description": "Filter by mata pelajaran ID",
                         "schema": {
                             "type": "integer"
                         }
@@ -1729,7 +1297,7 @@
                                                             "late"
                                                         ]
                                                     },
-                                                    "pbl_level": {
+                                                    "mata_pelajaran": {
                                                         "type": "object"
                                                     }
                                                 },
@@ -1771,7 +1339,7 @@
                                 "required": [
                                     "case_number",
                                     "title",
-                                    "pbl_level_id",
+                                    "mata_pelajaran_id",
                                     "description",
                                     "start_date",
                                     "deadline"
@@ -1785,7 +1353,7 @@
                                         "type": "string",
                                         "example": "System Login Bermasalah"
                                     },
-                                    "pbl_level_id": {
+                                    "mata_pelajaran_id": {
                                         "type": "integer",
                                         "example": 1
                                     },
@@ -2009,7 +1577,7 @@
                                     "description": {
                                         "type": "string"
                                     },
-                                    "pbl_level_id": {
+                                    "mata_pelajaran_id": {
                                         "type": "integer"
                                     },
                                     "deadline": {
@@ -2075,338 +1643,6 @@
                     },
                     "403": {
                         "description": "Forbidden - Only Admin and Guru can delete cases"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/pbl-levels": {
-            "get": {
-                "tags": [
-                    "PBL Levels"
-                ],
-                "summary": "Get all PBL levels",
-                "description": "Retrieve all PBL levels available in the system. Accessible to all authenticated users.",
-                "operationId": "listPblLevels",
-                "responses": {
-                    "200": {
-                        "description": "List of PBL levels retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer"
-                                                    },
-                                                    "name": {
-                                                        "type": "string"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        },
-                                        "message": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "PBL Levels"
-                ],
-                "summary": "Create a new PBL level (Admin only)",
-                "description": "Create a new PBL level. Only accessible to Admin role.",
-                "operationId": "createPblLevel",
-                "requestBody": {
-                    "description": "PBL level data",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Beginner"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "PBL level created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer"
-                                                },
-                                                "name": {
-                                                    "type": "string"
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "message": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Forbidden - Only Admin can create levels"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/pbl-levels/{pblLevel}": {
-            "get": {
-                "tags": [
-                    "PBL Levels"
-                ],
-                "summary": "Get a specific PBL level",
-                "description": "Retrieve details of a specific PBL level by ID. Accessible to all authenticated users.",
-                "operationId": "getPblLevel",
-                "parameters": [
-                    {
-                        "name": "pblLevel",
-                        "in": "path",
-                        "description": "PBL level ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "PBL level retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer"
-                                                },
-                                                "name": {
-                                                    "type": "string"
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "message": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "PBL level not found"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "PBL Levels"
-                ],
-                "summary": "Update a PBL level (Admin only)",
-                "description": "Update an existing PBL level. Only accessible to Admin role.",
-                "operationId": "updatePblLevel",
-                "parameters": [
-                    {
-                        "name": "pblLevel",
-                        "in": "path",
-                        "description": "PBL level ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Advanced"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "PBL level updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer"
-                                                },
-                                                "name": {
-                                                    "type": "string"
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "message": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "PBL level not found"
-                    },
-                    "422": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Forbidden - Only Admin can update levels"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "PBL Levels"
-                ],
-                "summary": "Delete a PBL level (Admin only)",
-                "description": "Delete an existing PBL level. Only accessible to Admin role.",
-                "operationId": "deletePblLevel",
-                "parameters": [
-                    {
-                        "name": "pblLevel",
-                        "in": "path",
-                        "description": "PBL level ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "PBL level deleted successfully"
-                    },
-                    "404": {
-                        "description": "PBL level not found"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Forbidden - Only Admin can delete levels"
                     }
                 },
                 "security": [
@@ -2851,6 +2087,33 @@
                     },
                     "404": {
                         "description": "Result not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/assessments/mata-pelajaran/{id}": {
+            "get": {
+                "tags": [
+                    "Assessments"
+                ],
+                "summary": "Get assessments filtered by mata pelajaran",
+                "operationId": "57d020419a56c22445e4d65a44739f5a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Mata pelajaran ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of assessments filtered by mata pelajaran"
                     }
                 },
                 "security": [
@@ -3763,6 +3026,37 @@
                 ]
             }
         },
+        "/pbl-cases/mata-pelajaran/{id}": {
+            "get": {
+                "tags": [
+                    "PBL Cases"
+                ],
+                "summary": "List PBL cases by mata pelajaran",
+                "description": "Retrieve paginated PBL cases filtered by mata pelajaran ID",
+                "operationId": "getPblCasesByMataPelajaran",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Mata pelajaran ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of PBL cases filtered by mata pelajaran"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/auth/user/register": {
             "post": {
                 "tags": [
@@ -4422,19 +3716,19 @@
                 ]
             }
         },
-        "/lessons/by-level/{level}": {
+        "/lessons/by-mata-pelajaran/{mataPelajaran}": {
             "get": {
                 "tags": [
                     "Lessons"
                 ],
-                "summary": "Get lessons by level",
-                "description": "Retrieve all lessons for a specific level.",
-                "operationId": "e5bd01cc1dfc7d046d140dd18f62b2c6",
+                "summary": "Get lessons by mata pelajaran",
+                "description": "Retrieve all lessons for a specific mata pelajaran (subject).",
+                "operationId": "33960798d36a3eec85905b78a802239c",
                 "parameters": [
                     {
-                        "name": "level",
+                        "name": "mataPelajaran",
                         "in": "path",
-                        "description": "Level number",
+                        "description": "Mata pelajaran number",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -4443,7 +3737,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Lessons by level",
+                        "description": "Lessons by mata pelajaran",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4454,7 +3748,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Lessons by level retrieved successfully"
+                                            "example": "Lessons by mata pelajaran retrieved successfully"
                                         },
                                         "data": {
                                             "type": "array",
@@ -4472,7 +3766,7 @@
                         "description": "Unauthorized"
                     },
                     "404": {
-                        "description": "Level not found"
+                        "description": "Mata pelajaran not found"
                     }
                 },
                 "security": [
@@ -4735,14 +4029,14 @@
                 ]
             }
         },
-        "/levels": {
+        "/mata-pelajarans": {
             "get": {
                 "tags": [
-                    "Levels"
+                    "MataPelajaran"
                 ],
-                "summary": "Get paginated levels",
-                "description": "Retrieve paginated list of learning levels.",
-                "operationId": "7a44321486ccf18b092538f69cdd9dc9",
+                "summary": "Get paginated mata pelajarans",
+                "description": "Retrieve paginated list of learning subjects (mata pelajaran).",
+                "operationId": "efb07975aa600fa5cf2da4183a920eb1",
                 "parameters": [
                     {
                         "name": "pagesize",
@@ -4756,7 +4050,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Paginated levels",
+                        "description": "Paginated mata pelajarans",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4767,7 +4061,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Levels retrieved successfully"
+                                            "example": "Mata pelajarans retrieved successfully"
                                         },
                                         "data": {
                                             "type": "array",
@@ -4796,11 +4090,11 @@
             },
             "post": {
                 "tags": [
-                    "Levels"
+                    "MataPelajaran"
                 ],
-                "summary": "Create new level",
-                "description": "Create a new learning level. Only accessible to admin and guru roles.",
-                "operationId": "f476b431420da9716f8b06eb3126738c",
+                "summary": "Create new mata pelajaran",
+                "description": "Create a new learning subject. Only accessible to admin and guru roles.",
+                "operationId": "58ed41ffd034e6bf0740df4691d7a5a0",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -4812,15 +4106,15 @@
                                 ],
                                 "properties": {
                                     "name": {
-                                        "description": "Level name",
+                                        "description": "Mata pelajaran name",
                                         "type": "string"
                                     },
                                     "level_number": {
-                                        "description": "Level number",
+                                        "description": "Mata pelajaran number",
                                         "type": "integer"
                                     },
                                     "description": {
-                                        "description": "Level description",
+                                        "description": "Mata pelajaran description",
                                         "type": "string"
                                     }
                                 },
@@ -4831,7 +4125,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Level created successfully",
+                        "description": "Mata pelajaran created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4842,7 +4136,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Level created successfully"
+                                            "example": "Mata pelajaran created successfully"
                                         },
                                         "data": {
                                             "type": "object"
@@ -4870,17 +4164,17 @@
                 ]
             }
         },
-        "/levels/all": {
+        "/mata-pelajarans/all": {
             "get": {
                 "tags": [
-                    "Levels"
+                    "MataPelajaran"
                 ],
-                "summary": "Get all levels with lessons",
-                "description": "Retrieve all learning levels with their associated lessons.",
-                "operationId": "b405363be9ca13becffb3fa0d533a170",
+                "summary": "Get all mata pelajarans with lessons",
+                "description": "Retrieve all learning subjects with their associated lessons.",
+                "operationId": "a9e55ab6c27d7d5e74fc3c99a95868fa",
                 "responses": {
                     "200": {
-                        "description": "All levels with lessons",
+                        "description": "All mata pelajarans with lessons",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4891,7 +4185,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "All levels retrieved successfully"
+                                            "example": "All mata pelajarans retrieved successfully"
                                         },
                                         "data": {
                                             "type": "array",
@@ -4916,19 +4210,19 @@
                 ]
             }
         },
-        "/levels/{level}": {
+        "/mata-pelajarans/{mataPelajaran}": {
             "get": {
                 "tags": [
-                    "Levels"
+                    "MataPelajaran"
                 ],
-                "summary": "Get level by number",
-                "description": "Retrieve detailed information of a specific level by level number.",
-                "operationId": "19a84dc8cf9d286d0d2127f729909c78",
+                "summary": "Get mata pelajaran by number",
+                "description": "Retrieve detailed information of a specific mata pelajaran by level number.",
+                "operationId": "87dc20637c4a8c1e95eebd3c5b1635d9",
                 "parameters": [
                     {
-                        "name": "level",
+                        "name": "mataPelajaran",
                         "in": "path",
-                        "description": "Level number",
+                        "description": "Mata pelajaran number",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -4937,7 +4231,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Level retrieved successfully",
+                        "description": "Mata pelajaran retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4948,7 +4242,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Level retrieved successfully"
+                                            "example": "Mata pelajaran retrieved successfully"
                                         },
                                         "data": {
                                             "type": "object"
@@ -4963,7 +4257,7 @@
                         "description": "Unauthorized"
                     },
                     "404": {
-                        "description": "Level not found"
+                        "description": "Mata pelajaran not found"
                     }
                 },
                 "security": [
@@ -4974,16 +4268,16 @@
             },
             "put": {
                 "tags": [
-                    "Levels"
+                    "MataPelajaran"
                 ],
-                "summary": "Update level",
-                "description": "Update an existing learning level. Only accessible to admin and guru roles.",
-                "operationId": "5070abf2406c05db94e618148708b832",
+                "summary": "Update mata pelajaran",
+                "description": "Update an existing learning subject. Only accessible to admin and guru roles.",
+                "operationId": "9806ec01650b233a5724a0c5154d08e6",
                 "parameters": [
                     {
-                        "name": "level",
+                        "name": "mataPelajaran",
                         "in": "path",
-                        "description": "Level number",
+                        "description": "Mata pelajaran number",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -5012,7 +4306,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Level updated successfully",
+                        "description": "Mata pelajaran updated successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5023,7 +4317,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Level updated successfully"
+                                            "example": "Mata pelajaran updated successfully"
                                         },
                                         "data": {
                                             "type": "object"
@@ -5044,7 +4338,7 @@
                         "description": "Forbidden"
                     },
                     "404": {
-                        "description": "Level not found"
+                        "description": "Mata pelajaran not found"
                     }
                 },
                 "security": [
@@ -5055,16 +4349,16 @@
             },
             "delete": {
                 "tags": [
-                    "Levels"
+                    "MataPelajaran"
                 ],
-                "summary": "Delete level",
-                "description": "Delete a learning level permanently. Only accessible to admin and guru roles.",
-                "operationId": "e343c3ea27f6a62e75192105c30d7985",
+                "summary": "Delete mata pelajaran",
+                "description": "Delete a learning subject permanently. Only accessible to admin and guru roles.",
+                "operationId": "a6b4faac8f5eaaeecac0c5e6bbf460f1",
                 "parameters": [
                     {
-                        "name": "level",
+                        "name": "mataPelajaran",
                         "in": "path",
-                        "description": "Level number",
+                        "description": "Mata pelajaran number",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -5073,7 +4367,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Level deleted successfully",
+                        "description": "Mata pelajaran deleted successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5084,7 +4378,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Level deleted successfully"
+                                            "example": "Mata pelajaran deleted successfully"
                                         },
                                         "data": {
                                             "type": "null"
@@ -5102,7 +4396,7 @@
                         "description": "Forbidden"
                     },
                     "404": {
-                        "description": "Level not found"
+                        "description": "Mata pelajaran not found"
                     }
                 },
                 "security": [
@@ -5758,7 +5052,7 @@
                     "User Progress"
                 ],
                 "summary": "Get user's progress",
-                "description": "Retrieve the authenticated user's overall progress including completed lessons and levels.",
+                "description": "Retrieve the authenticated user's overall progress including completed lessons and mata_pelajarans.",
                 "operationId": "e75e84df39c24f90348d8727514b23f0",
                 "responses": {
                     "200": {
@@ -5780,7 +5074,7 @@
                                             "type": "number",
                                             "format": "float"
                                         },
-                                        "levels": {
+                                        "mataPelajarans": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object"
@@ -6270,10 +5564,6 @@
             "description": "PBL case management (GET for all users, CRUD for Admin/Guru only)"
         },
         {
-            "name": "PBL Levels",
-            "description": "Manage PBL levels (GET for all users, CRUD for Admin only)"
-        },
-        {
             "name": "PBL Submissions - Student",
             "description": "Student endpoints for submitting and viewing personal submissions"
         },
@@ -6288,10 +5578,6 @@
         {
             "name": "Assessments",
             "description": "Assessments"
-        },
-        {
-            "name": "Assessment Levels",
-            "description": "Assessment Levels"
         },
         {
             "name": "Options",
@@ -6322,8 +5608,8 @@
             "description": "Lessons"
         },
         {
-            "name": "Levels",
-            "description": "Levels"
+            "name": "MataPelajaran",
+            "description": "MataPelajaran"
         },
         {
             "name": "Users",

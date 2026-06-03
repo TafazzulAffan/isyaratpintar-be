@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreLevelRequest extends FormRequest
+class UpdateMataPelajaranRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,7 +14,7 @@ class StoreLevelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'level_number' => ['required', 'integer', 'min:1', 'unique:levels,level_number'],
+            'name' => ['required', 'string', 'max:255', 'unique:mata_pelajarans,name,' . $this->mataPelajaran],
         ];
     }
 }

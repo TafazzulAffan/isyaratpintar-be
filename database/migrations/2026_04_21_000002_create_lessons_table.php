@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('level_id')->constrained('levels')->cascadeOnDelete();
+            $table->foreignId('mata_pelajaran_id')->constrained('mata_pelajarans')->cascadeOnDelete();
             $table->string('slug', 120)->unique();
             $table->string('title', 255);
             $table->text('description');
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('pdf_url')->nullable();
             $table->timestamps();
 
-            $table->index('level_id');
+            $table->index('mata_pelajaran_id');
             $table->index('slug');
         });
     }

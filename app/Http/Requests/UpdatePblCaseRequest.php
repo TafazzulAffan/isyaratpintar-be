@@ -37,7 +37,7 @@ class UpdatePblCaseRequest extends FormRequest
         
         return [
             'title' => 'sometimes|string|max:255',
-            'pbl_level_id' => 'sometimes|integer|exists:pbl_levels,id',
+            'mata_pelajaran_id' => 'sometimes|integer|exists:mata_pelajarans,id',
             'description' => 'sometimes|string',
             'image_url' => 'nullable|url',
             'time_limit' => 'nullable|integer|min:0',

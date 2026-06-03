@@ -17,7 +17,7 @@ php artisan migrate
 ```
 
 Tabel yang dibuat:
-- `levels` - Tingkat kesulitan (Beginner, Intermediate, Advanced)
+- `mata_pelajarans` - Mata pelajaran (Subjects/Courses)
 - `pbl_cases` - Kasus PBL utama
 - `case_sections` - Bagian-bagian dalam case
 - `case_section_items` - Item detail dalam section
@@ -26,7 +26,7 @@ Tabel yang dibuat:
 
 ### 2. Seed Data (Optional)
 
-Buat seed data untuk levels:
+Buat seed data untuk mata pelajarans:
 
 ```bash
 php artisan tinker
@@ -34,9 +34,9 @@ php artisan tinker
 
 Dalam tinker:
 ```php
-App\Models\Level::create(['name' => 'Beginner']);
-App\Models\Level::create(['name' => 'Intermediate']);
-App\Models\Level::create(['name' => 'Advanced']);
+App\Models\MataPelajaran::create(['level_number' => 1, 'name' => 'Mata Pelajaran 1']);
+App\Models\MataPelajaran::create(['level_number' => 2, 'name' => 'Mata Pelajaran 2']);
+App\Models\MataPelajaran::create(['level_number' => 3, 'name' => 'Mata Pelajaran 3']);
 ```
 
 ### 3. Generate Swagger Documentation

@@ -23,7 +23,7 @@ class StoreAssessmentRequest extends FormRequest
     {
         return [
             'slug' => 'required|string|unique:assessments,slug',
-            'assessment_level_id' => 'required|integer|exists:assessment_levels,id',
+            'mata_pelajaran_id' => 'required|integer|exists:mata_pelajarans,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'time_limit' => 'required|integer|min:1',
@@ -34,8 +34,8 @@ class StoreAssessmentRequest extends FormRequest
     {
         return [
             'slug.unique' => 'Slug assessment sudah digunakan',
-            'assessment_level_id.required' => 'Assessment level harus dipilih',
-            'assessment_level_id.exists' => 'Assessment level tidak ditemukan',
+            'mata_pelajaran_id.required' => 'Mata pelajaran harus dipilih',
+            'mata_pelajaran_id.exists' => 'Mata pelajaran tidak ditemukan',
             'time_limit.min' => 'Waktu minimal harus 1 menit',
         ];
     }

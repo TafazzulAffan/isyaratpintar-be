@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Lesson;
-use App\Models\Level;
+use App\Models\MataPelajaran;
 use App\Models\User;
 use App\Models\UserLesson;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -13,75 +13,74 @@ use Illuminate\Support\Facades\Storage;
 
 class LessonService extends BaseService
 {
-    public function getPaginatedLevels(?User $user = null, int $pageSize = 15): LengthAwarePaginator
+    public function getPaginatedMataPelajarans(?User $user = null, int $pageSize = 15): LengthAwarePaginator
     {
-        $paginator = Level::query()
+        $paginator = MataPelajaran::query()
             ->with(['lessons' => function ($query) {
                 $query->orderBy('id');
             }])
-            ->orderBy('level_number', 'asc')
+            ->orderBy('name', 'asc')
             ->paginate($pageSize);
 
-        foreach ($paginator->getCollection() as $level) {
-            $this->attachCompletionStatus($level->lessons, $user);
+        foreach ($paginator->getCollection() as $mataPelajaran) {
+            $this->attachCompletionStatus($mataPelajaran->lessons, $user);
         }
 
         return $paginator;
     }
 
-    public function getLevelsWithLessons(?User $user = null): Collection
+    public function getMataPelajaransWithLessons(?User $user = null): Collection
     {
-        $levels = Level::query()
+        $mataPelajarans = MataPelajaran::query()
             ->with(['lessons' => function ($query) {
                 $query->orderBy('id');
             }])
-            ->orderBy('level_number', 'asc')
+            ->orderBy('name', 'asc')
             ->get();
 
-        foreach ($levels as $level) {
-            $this->attachCompletionStatus($level->lessons, $user);
+        foreach ($mataPelajarans as $mataPelajaran) {
+            $this->attachCompletionStatus($mataPelajaran->lessons, $user);
         }
 
-        return $levels;
+        return $mataPelajarans;
     }
 
-    public function getLevelByNumber(int $levelNumber, ?User $user = null): Level
+    public function getMataPelajaranById(int $id, ?User $user = null): MataPelajaran
     {
-        $level = Level::query()
+        $mataPelajaran = MataPelajaran::query()
             ->with(['lessons' => function ($query) {
                 $query->orderBy('id');
             }])
-            ->where('level_number', $levelNumber)
-            ->firstOrFail();
+            ->findOrFail($id);
 
-        $this->attachCompletionStatus($level->lessons, $user);
+        $this->attachCompletionStatus($mataPelajaran->lessons, $user);
 
-        return $level;
+        return $mataPelajaran;
     }
 
-    public function createLevel(array $data): Level
+    public function createMataPelajaran(array $data): MataPelajaran
     {
-        return Level::query()->create($data);
+        return MataPelajaran::query()->create($data);
     }
 
-    public function updateLevelByNumber(int $levelNumber, array $data): Level
+    public function updateMataPelajaranById(int $id, array $data): MataPelajaran
     {
-        $level = Level::query()->where('level_number', $levelNumber)->firstOrFail();
-        $level->update($data);
+        $mataPelajaran = MataPelajaran::query()->findOrFail($id);
+        $mataPelajaran->update($data);
 
-        return $level->fresh(['lessons']);
+        return $mataPelajaran->fresh(['lessons']);
     }
 
-    public function deleteLevelByNumber(int $levelNumber): void
+    public function deleteMataPelajaranById(int $id): void
     {
-        $level = Level::query()->where('level_number', $levelNumber)->firstOrFail();
-        $level->delete();
+        $mataPelajaran = MataPelajaran::query()->findOrFail($id);
+        $mataPelajaran->delete();
     }
 
     public function getLessonBySlug(string $slug, ?User $user = null): Lesson
     {
         $lesson = Lesson::query()
-            ->with('level')
+            ->with('mataPelajaran')
             ->where('slug', $slug)
             ->firstOrFail();
 
@@ -90,12 +89,10 @@ class LessonService extends BaseService
         return $lesson;
     }
 
-    public function getLessonsByLevelNumber(int $levelNumber, ?User $user = null): Collection
+    public function getLessonsByMataPelajaranId(int $id, ?User $user = null): Collection
     {
-        $level = Level::query()->where('level_number', $levelNumber)->firstOrFail();
-
         $lessons = Lesson::query()
-            ->where('level_id', $level->id)
+            ->where('mata_pelajaran_id', $id)
             ->orderBy('id', 'asc')
             ->get();
 
@@ -107,7 +104,7 @@ class LessonService extends BaseService
     public function getAllLessons(?User $user = null): Collection
     {
         $lessons = Lesson::query()
-            ->with('level')
+            ->with('mataPelajaran')
             ->orderBy('id', 'asc')
             ->get();
 
@@ -129,7 +126,7 @@ class LessonService extends BaseService
             ->all();
 
         $lessons = Lesson::query()
-            ->with('level')
+            ->with('mataPelajaran')
             ->whereIn('id', $completedLessonIds)
             ->orderBy('id', 'asc')
             ->get();
@@ -142,7 +139,7 @@ class LessonService extends BaseService
     public function getPaginatedLessons(?User $user = null, int $pageSize = 15): LengthAwarePaginator
     {
         $paginator = Lesson::query()
-            ->with('level')
+            ->with('mataPelajaran')
             ->orderBy('id', 'asc')
             ->paginate($pageSize);
 
@@ -187,7 +184,7 @@ class LessonService extends BaseService
 
         $lesson->update($data);
 
-        $updatedLesson = $lesson->fresh(['level']);
+        $updatedLesson = $lesson->fresh(['mataPelajaran']);
         $this->attachCompletionStatus(new Collection([$updatedLesson]), $user);
 
         return $updatedLesson;

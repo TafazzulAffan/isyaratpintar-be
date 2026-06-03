@@ -40,7 +40,7 @@ class UserProgressService extends BaseService
 
     public function getUserProgress(User $user): array
     {
-        $levels = $this->lessonService->getLevelsWithLessons($user);
+        $mataPelajarans = $this->lessonService->getMataPelajaransWithLessons($user);
 
         $totalLessons = Lesson::query()->count();
         $completedLessons = UserLesson::query()
@@ -57,7 +57,7 @@ class UserProgressService extends BaseService
             'totalLessons' => $totalLessons,
             'completedLessons' => $completedLessons,
             'progressPercentage' => $progressPercentage,
-            'levels' => $levels,
+            'mataPelajarans' => $mataPelajarans,
         ];
     }
 }
