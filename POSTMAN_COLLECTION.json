@@ -1,0 +1,777 @@
+{
+  "info": {
+    "name": "Skillbytes API",
+    "description": "Complete Skillbytes Learning Management System API Collection",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"role\": \"siswa\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/user/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "user", "login"]
+            }
+          }
+        },
+        {
+          "name": "Logout User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/user/?page=1&per_page=10",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "user", ""],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/user/all",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "user", "all"]
+            }
+          }
+        },
+        {
+          "name": "Get Single User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/user/:user_id",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "user", ":user_id"],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"siswa\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/user/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "user", ""]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Smith\",\n  \"email\": \"jane.smith@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/user/:user_id",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "user", ":user_id"],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"password123\",\n  \"new_password\": \"newpassword123\",\n  \"new_password_confirmation\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/user/update-password/:user_id",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "user", "update-password", ":user_id"],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/user/:user_id",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "user", ":user_id"],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mata Pelajaran",
+      "item": [
+        {
+          "name": "List Mata Pelajaran",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/mata-pelajarans",
+              "host": ["{{base_url}}"],
+              "path": ["mata-pelajarans"]
+            }
+          }
+        },
+        {
+          "name": "Get All Mata Pelajaran",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mata-pelajarans/all",
+              "host": ["{{base_url}}"],
+              "path": ["mata-pelajarans", "all"]
+            }
+          }
+        },
+        {
+          "name": "Create Mata Pelajaran",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Matematika\",\n  \"description\": \"Pelajaran Matematika\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mata-pelajarans",
+              "host": ["{{base_url}}"],
+              "path": ["mata-pelajarans"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lessons",
+      "item": [
+        {
+          "name": "List Lessons",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/lessons",
+              "host": ["{{base_url}}"],
+              "path": ["lessons"]
+            }
+          }
+        },
+        {
+          "name": "Create Lesson",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mata_pelajaran_id\": 1,\n  \"title\": \"Introduction to Functions\",\n  \"description\": \"Learn the basics of functions\",\n  \"resume\": \"Summary of the lesson\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/lessons",
+              "host": ["{{base_url}}"],
+              "path": ["lessons"]
+            }
+          }
+        },
+        {
+          "name": "Get Single Lesson",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lessons/:slug",
+              "host": ["{{base_url}}"],
+              "path": ["lessons", ":slug"],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "PBL Cases",
+      "item": [
+        {
+          "name": "List PBL Cases",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/pbl-cases",
+              "host": ["{{base_url}}"],
+              "path": ["pbl-cases"]
+            }
+          }
+        },
+        {
+          "name": "Create PBL Case",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mata_pelajaran_id\": 1,\n  \"title\": \"System Login Authentication Failed\",\n  \"description\": \"Detailed problem description...\",\n  \"image_url\": \"https://example.com/image.jpg\",\n  \"start_date\": \"2026-01-20T09:00:00Z\",\n  \"deadline\": \"2026-01-27T17:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pbl-cases",
+              "host": ["{{base_url}}"],
+              "path": ["pbl-cases"]
+            }
+          }
+        },
+        {
+          "name": "Get Single PBL Case",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/pbl-cases/:id",
+              "host": ["{{base_url}}"],
+              "path": ["pbl-cases", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "PBL Submissions",
+      "item": [
+        {
+          "name": "Create Submission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "pbl_case_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "answer",
+                  "value": "My solution to the problem...",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "type": "file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/pbl-submissions",
+              "host": ["{{base_url}}"],
+              "path": ["pbl-submissions"]
+            }
+          }
+        },
+        {
+          "name": "Get My Submissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/pbl-submissions/me",
+              "host": ["{{base_url}}"],
+              "path": ["pbl-submissions", "me"]
+            }
+          }
+        },
+        {
+          "name": "Grade Submission",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 85.5,\n  \"feedback\": \"Good work, but needs more detail\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pbl-submissions/:id/grade",
+              "host": ["{{base_url}}"],
+              "path": ["pbl-submissions", ":id", "grade"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Assessments",
+      "item": [
+        {
+          "name": "List Assessments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/assessments/",
+              "host": ["{{base_url}}"],
+              "path": ["assessments", ""]
+            }
+          }
+        },
+        {
+          "name": "Start Assessment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/assessments/:id/start",
+              "host": ["{{base_url}}"],
+              "path": ["assessments", ":id", "start"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Submit Answer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_id\": 1,\n  \"answer\": \"Option A\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/assessments/:attemptId/answers",
+              "host": ["{{base_url}}"],
+              "path": ["assessments", ":attemptId", "answers"],
+              "variable": [
+                {
+                  "key": "attemptId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Finish Assessment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/assessments/:attemptId/finish",
+              "host": ["{{base_url}}"],
+              "path": ["assessments", ":attemptId", "finish"],
+              "variable": [
+                {
+                  "key": "attemptId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Get Activity Log",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/analytics/activity-log",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "activity-log"]
+            }
+          }
+        },
+        {
+          "name": "Get Learning Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/analytics/learning-stats",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "learning-stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Session History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/analytics/session-history",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "session-history"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "SPK",
+      "item": [
+        {
+          "name": "Admin - At Risk Students",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/spk/at-risk-students",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "spk", "at-risk-students"]
+            }
+          }
+        },
+        {
+          "name": "Student - Subject Mastery",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/spk/subject-mastery",
+              "host": ["{{base_url}}"],
+              "path": ["spk", "subject-mastery"]
+            }
+          }
+        },
+        {
+          "name": "Student - Risk Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/spk/risk-profile",
+              "host": ["{{base_url}}"],
+              "path": ["spk", "risk-profile"]
+            }
+          }
+        },
+        {
+          "name": "Student - Recommendations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/spk/recommendations",
+              "host": ["{{base_url}}"],
+              "path": ["spk", "recommendations"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

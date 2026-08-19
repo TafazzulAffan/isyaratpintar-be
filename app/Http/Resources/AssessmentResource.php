@@ -16,6 +16,7 @@ class AssessmentResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'mata_pelajaran_id' => $this->mata_pelajaran_id,
             'slug' => $this->slug,
             'title' => $this->title,
             'description' => $this->description,

@@ -13,11 +13,15 @@ use Illuminate\Support\Facades\Storage;
 
 class LessonService extends BaseService
 {
+    public function __construct(
+        private KelasAccessService $kelasAccessService
+    ) {}
+
     public function getPaginatedMataPelajarans(?User $user = null, int $pageSize = 15): LengthAwarePaginator
     {
         $paginator = MataPelajaran::query()
-            ->with(['lessons' => function ($query) {
-                $query->orderBy('id');
+            ->with(['lessons' => function ($query) use ($user) {
+                $this->kelasAccessService->scopeContentQuery($query, $user)->orderBy('id');
             }])
             ->orderBy('name', 'asc')
             ->paginate($pageSize);
@@ -32,8 +36,8 @@ class LessonService extends BaseService
     public function getMataPelajaransWithLessons(?User $user = null): Collection
     {
         $mataPelajarans = MataPelajaran::query()
-            ->with(['lessons' => function ($query) {
-                $query->orderBy('id');
+            ->with(['lessons' => function ($query) use ($user) {
+                $this->kelasAccessService->scopeContentQuery($query, $user)->orderBy('id');
             }])
             ->orderBy('name', 'asc')
             ->get();
@@ -48,8 +52,8 @@ class LessonService extends BaseService
     public function getMataPelajaranById(int $id, ?User $user = null): MataPelajaran
     {
         $mataPelajaran = MataPelajaran::query()
-            ->with(['lessons' => function ($query) {
-                $query->orderBy('id');
+            ->with(['lessons' => function ($query) use ($user) {
+                $this->kelasAccessService->scopeContentQuery($query, $user)->orderBy('id');
             }])
             ->findOrFail($id);
 
@@ -79,9 +83,11 @@ class LessonService extends BaseService
 
     public function getLessonBySlug(string $slug, ?User $user = null): Lesson
     {
-        $lesson = Lesson::query()
-            ->with('mataPelajaran')
-            ->where('slug', $slug)
+        $lesson = $this->kelasAccessService
+            ->scopeContentQuery(
+                Lesson::query()->with('mataPelajaran')->where('slug', $slug),
+                $user
+            )
             ->firstOrFail();
 
         $this->attachCompletionStatus(new Collection([$lesson]), $user);
@@ -91,8 +97,26 @@ class LessonService extends BaseService
 
     public function getLessonsByMataPelajaranId(int $id, ?User $user = null): Collection
     {
-        $lessons = Lesson::query()
-            ->where('mata_pelajaran_id', $id)
+        $lessons = $this->kelasAccessService
+            ->scopeContentQuery(
+                Lesson::query()->where('mata_pelajaran_id', $id),
+                $user
+            )
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $this->attachCompletionStatus($lessons, $user);
+
+        return $lessons;
+    }
+
+    public function getLessonsByKelasId(int $kelasId, ?User $user = null): Collection
+    {
+        $lessons = $this->kelasAccessService
+            ->scopeContentQuery(
+                Lesson::query()->where('kelas_id', $kelasId)->with('mataPelajaran'),
+                $user
+            )
             ->orderBy('id', 'asc')
             ->get();
 
@@ -103,8 +127,11 @@ class LessonService extends BaseService
 
     public function getAllLessons(?User $user = null): Collection
     {
-        $lessons = Lesson::query()
-            ->with('mataPelajaran')
+        $lessons = $this->kelasAccessService
+            ->scopeContentQuery(
+                Lesson::query()->with('mataPelajaran'),
+                $user
+            )
             ->orderBy('id', 'asc')
             ->get();
 
@@ -125,9 +152,13 @@ class LessonService extends BaseService
             ->pluck('lesson_id')
             ->all();
 
-        $lessons = Lesson::query()
-            ->with('mataPelajaran')
-            ->whereIn('id', $completedLessonIds)
+        $lessons = $this->kelasAccessService
+            ->scopeContentQuery(
+                Lesson::query()
+                    ->with('mataPelajaran')
+                    ->whereIn('id', $completedLessonIds),
+                $user
+            )
             ->orderBy('id', 'asc')
             ->get();
 
@@ -138,8 +169,11 @@ class LessonService extends BaseService
 
     public function getPaginatedLessons(?User $user = null, int $pageSize = 15): LengthAwarePaginator
     {
-        $paginator = Lesson::query()
-            ->with('mataPelajaran')
+        $paginator = $this->kelasAccessService
+            ->scopeContentQuery(
+                Lesson::query()->with('mataPelajaran'),
+                $user
+            )
             ->orderBy('id', 'asc')
             ->paginate($pageSize);
 
@@ -151,12 +185,6 @@ class LessonService extends BaseService
     public function createLesson(array $data): Lesson
     {
         unset($data['slug']);
-
-        if (isset($data['pdf_file']) && $data['pdf_file'] instanceof UploadedFile) {
-            $path = $data['pdf_file']->store('lessons/pdfs', 'public');
-            $data['pdf_url'] = $path;
-            unset($data['pdf_file']);
-        }
 
         $lesson = Lesson::query()->create($data);
         $lesson->setAttribute('completed', false);
@@ -170,38 +198,12 @@ class LessonService extends BaseService
 
         unset($data['slug']);
 
-        if (isset($data['pdf_file']) && $data['pdf_file'] instanceof UploadedFile) {
-            $oldPdfPath = $this->extractPublicStoragePath($lesson->pdf_url);
-
-            $path = $data['pdf_file']->store('lessons/pdfs', 'public');
-            $data['pdf_url'] = $path;
-            unset($data['pdf_file']);
-
-            if ($oldPdfPath && Storage::disk('public')->exists($oldPdfPath)) {
-                Storage::disk('public')->delete($oldPdfPath);
-            }
-        }
-
         $lesson->update($data);
 
         $updatedLesson = $lesson->fresh(['mataPelajaran']);
         $this->attachCompletionStatus(new Collection([$updatedLesson]), $user);
 
         return $updatedLesson;
-    }
-
-    private function extractPublicStoragePath(?string $pdfUrl): ?string
-    {
-        if (!$pdfUrl) {
-            return null;
-        }
-
-        $prefix = '/storage/';
-        if (str_starts_with($pdfUrl, $prefix)) {
-            return ltrim(substr($pdfUrl, strlen($prefix)), '/');
-        }
-
-        return ltrim($pdfUrl, '/');
     }
 
     public function deleteLessonBySlug(string $slug): void

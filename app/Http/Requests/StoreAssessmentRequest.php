@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\KelasAccessibleByGuru;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAssessmentRequest extends FormRequest
@@ -23,6 +24,7 @@ class StoreAssessmentRequest extends FormRequest
     {
         return [
             'slug' => 'required|string|unique:assessments,slug',
+            'kelas_id' => ['required', 'integer', 'exists:kelas,id', new KelasAccessibleByGuru()],
             'mata_pelajaran_id' => 'required|integer|exists:mata_pelajarans,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',

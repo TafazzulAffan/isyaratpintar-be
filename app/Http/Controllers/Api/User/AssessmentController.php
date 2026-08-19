@@ -50,7 +50,7 @@ class AssessmentController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $assessments = $this->assessmentService->getAllAssessments();
+        $assessments = $this->assessmentService->getAllAssessments($request->user());
         return response()->json([
             'success' => true,
             'data' => AssessmentResource::collection($assessments->items()),
@@ -79,9 +79,9 @@ class AssessmentController extends Controller
      *     @OA\Response(response=200, description="List of assessments filtered by mata pelajaran")
      * )
      */
-    public function byMataPelajaran(int $id): JsonResponse
+    public function byMataPelajaran(Request $request, int $id): JsonResponse
     {
-        $assessments = $this->assessmentService->getAssessmentsByMataPelajaranId($id);
+        $assessments = $this->assessmentService->getAssessmentsByMataPelajaranId($id, $request->user());
 
         return response()->json([
             'success' => true,
@@ -136,9 +136,9 @@ class AssessmentController extends Controller
      *     @OA\Response(response=404, description="Assessment not found")
      * )
      */
-    public function show(string $slug): JsonResponse
+    public function show(Request $request, string $slug): JsonResponse
     {
-        $assessment = $this->assessmentService->getAssessmentBySlug($slug);
+        $assessment = $this->assessmentService->getAssessmentBySlug($slug, $request->user());
 
         if (!$assessment) {
             return response()->json([
@@ -187,7 +187,7 @@ class AssessmentController extends Controller
     public function start(int $id, Request $request): JsonResponse
     {
         $user = $request->user();
-        $assessment = $this->assessmentService->getAssessmentById($id);
+        $assessment = $this->assessmentService->getAssessmentById($id, $user);
 
         if (!$assessment) {
             return response()->json([

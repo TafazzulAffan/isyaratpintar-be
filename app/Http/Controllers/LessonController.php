@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateLessonRequest;
 use App\Http\Requests\UpdateLessonResumeRequest;
 use App\Http\Requests\UploadFileRequest;
 use App\Http\Resources\LessonResource;
+use App\Models\Lesson;
 use App\Services\LessonService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -201,18 +202,19 @@ class LessonController extends Controller
      * @OA\Post(
      *     path="/lessons",
      *     summary="Create new lesson",
-     *     description="Create a new lesson. Only accessible to admin and guru roles.",
+     *     description="Create a new lesson. Only accessible to admin and guru roles. Use POST /lessons/{slug}/upload-file to upload lesson materials after creation.",
      *     tags={"Lessons"},
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"title","slug","level_id"},
+     *             required={"title","mata_pelajaran_id","kelas_id"},
      *             @OA\Property(property="title", type="string", description="Lesson title"),
-     *             @OA\Property(property="slug", type="string", description="Unique slug"),
      *             @OA\Property(property="description", type="string", description="Lesson description"),
-     *             @OA\Property(property="level_id", type="integer", description="Level ID"),
-     *             @OA\Property(property="content", type="string", description="Lesson content")
+     *             @OA\Property(property="mata_pelajaran_id", type="integer", description="Mata Pelajaran ID"),
+     *             @OA\Property(property="kelas_id", type="integer", description="Kelas ID"),
+     *             @OA\Property(property="duration", type="string", description="Lesson duration (minutes)"),
+     *             @OA\Property(property="resume", type="string", description="Lesson resume/summary")
      *         )
      *     ),
      *     @OA\Response(
@@ -231,6 +233,8 @@ class LessonController extends Controller
      */
     public function store(StoreLessonRequest $request): JsonResponse
     {
+        $this->authorize('create', Lesson::class);
+
         $lesson = $this->lessonService->createLesson($request->validated());
 
         return $this->createdResponse(
@@ -243,7 +247,7 @@ class LessonController extends Controller
      * @OA\Post(
      *     path="/lessons/{slug}",
      *     summary="Update lesson",
-     *     description="Update an existing lesson. Use POST for form-data/file uploads. Only accessible to admin and guru roles.",
+     *     description="Update an existing lesson. Only accessible to admin and guru roles. Use POST /lessons/{slug}/upload-file to upload/update lesson materials.",
      *     tags={"Lessons"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
@@ -257,7 +261,10 @@ class LessonController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="title", type="string", description="Updated title"),
      *             @OA\Property(property="description", type="string", description="Updated description"),
-     *             @OA\Property(property="content", type="string", description="Updated content")
+     *             @OA\Property(property="mata_pelajaran_id", type="integer", description="Mata Pelajaran ID"),
+     *             @OA\Property(property="kelas_id", type="integer", description="Kelas ID"),
+     *             @OA\Property(property="duration", type="string", description="Duration in minutes"),
+     *             @OA\Property(property="resume", type="string", description="Updated resume/summary")
      *         )
      *     ),
      *     @OA\Response(
@@ -277,6 +284,9 @@ class LessonController extends Controller
      */
     public function update(UpdateLessonRequest $request, string $slug): JsonResponse
     {
+        $lesson = Lesson::query()->where('slug', $slug)->firstOrFail();
+        $this->authorize('update', $lesson);
+
         $lesson = $this->lessonService->updateLessonBySlug($slug, $request->validated(), $request->user());
 
         return $this->successResponse(
@@ -314,6 +324,9 @@ class LessonController extends Controller
      */
     public function destroy(string $slug): JsonResponse
     {
+        $lesson = Lesson::query()->where('slug', $slug)->firstOrFail();
+        $this->authorize('delete', $lesson);
+
         $this->lessonService->deleteLessonBySlug($slug);
 
         return $this->successResponse(null, 'Lesson deleted successfully');

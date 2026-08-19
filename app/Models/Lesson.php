@@ -16,6 +16,7 @@ class Lesson extends Model
 
     protected $fillable = [
         'mata_pelajaran_id',
+        'kelas_id',
         'slug',
         'title',
         'description',
@@ -50,6 +51,11 @@ class Lesson extends Model
     public function mataPelajaran(): BelongsTo
     {
         return $this->belongsTo(MataPelajaran::class);
+    }
+
+    public function kelas(): BelongsTo
+    {
+        return $this->belongsTo(Kelas::class);
     }
 
     public function users(): BelongsToMany

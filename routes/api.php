@@ -18,3 +18,6 @@ require __DIR__ . '/api/file.php';
 require __DIR__ . '/api/users.php';
 require __DIR__ . '/api/pbl.php';
 require __DIR__ . '/api/assessments.php';
+require __DIR__ . '/api/tracking.php';
+require __DIR__ . '/api/spk.php';
+require __DIR__ . '/api/kelas.php';

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\Assessment\AnswerSubmitted;
 use App\Models\AssessmentAttempt;
 use App\Models\AttemptAnswer;
 use App\Models\Option;
@@ -15,11 +16,11 @@ class AnswerService
      *
      * @throws \Exception
      */
-        public function submitAnswer(
-            AssessmentAttempt $attempt,
-            int $questionId,
-            string $selectedOptionId     
-        ): AttemptAnswer {
+    public function submitAnswer(
+        AssessmentAttempt $attempt,
+        int $questionId,
+        string $selectedOptionId     
+    ): AttemptAnswer {
         // Validate attempt is in progress
         if (!$attempt->isInProgress()) {
             throw new \Exception('Assessment attempt is not in progress');
@@ -59,12 +60,17 @@ class AnswerService
         }
 
         // Create answer record
-        return AttemptAnswer::create([
+        $answer = AttemptAnswer::create([
             'attempt_id' => $attempt->id,
             'question_id' => $questionId,
             'selected_option_id' => $selectedOptionId,
             'is_correct' => $option->is_correct,
         ]);
+
+        // 🔥 DISPATCH EVENT
+        event(new AnswerSubmitted($attempt, $answer));
+
+        return $answer;
     }
 
     /**
@@ -156,6 +162,9 @@ class AnswerService
                     'selected_option_id' => $selectedOptionId,
                     'is_correct' => $option->is_correct,
                 ]);
+
+                // 🔥 DISPATCH EVENT
+                event(new AnswerSubmitted($attempt, $answer));
 
                 $results[] = [
                     'question_id' => $questionId,

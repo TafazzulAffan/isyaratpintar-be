@@ -397,9 +397,42 @@ class UserController extends Controller
     }
 
     /**
-     * Update user password
-     * PUT /api/auth/user/update-password/{id}
-     * Authorization: User can change own password, admin can change any
+     * @OA\Put(
+     *     path="/auth/user/update-password/{id}",
+     *     summary="Update user password",
+     *     description="Update user password. Users can only change their own password, while admin can change any user's password.",
+     *     tags={"Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="User ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Current and new password",
+     *         @OA\JsonContent(
+     *             required={"old_password","password","password_confirmation"},
+     *             @OA\Property(property="old_password", type="string", format="password", example="oldpassword123", description="Current password"),
+     *             @OA\Property(property="password", type="string", format="password", example="newpassword456", description="New password (min 8 characters)"),
+     *             @OA\Property(property="password_confirmation", type="string", format="password", example="newpassword456", description="New password confirmation")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Password updated successfully"),
+     *             @OA\Property(property="data", type="null")
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Validation error - old password incorrect or new password too short"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden - only admin or the user themselves can change password")
+     * )
      */
     public function updatePassword(Request $request, $id): JsonResponse
     {
@@ -427,8 +460,7 @@ class UserController extends Controller
     }
 
     /**
-     * Login user
-     * POST /api/users/login
+     * Login user endpoint (documented in AuthController)
      */
     public function login(LoginUserRequest $request): JsonResponse
     {

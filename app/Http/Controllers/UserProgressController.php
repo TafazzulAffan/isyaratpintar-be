@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MarkLessonCompletedRequest;
 use App\Http\Resources\MataPelajaranResource;
+use App\Models\Lesson;
 use App\Services\UserProgressService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -49,6 +50,9 @@ class UserProgressController extends Controller
      */
     public function markCompleted(MarkLessonCompletedRequest $request, int $lesson): JsonResponse
     {
+        $lessonModel = Lesson::query()->findOrFail($lesson);
+        $this->authorize('view', $lessonModel);
+
         $progress = $this->userProgressService->markLessonAsCompleted($request->user(), $lesson);
 
         return response()->json([

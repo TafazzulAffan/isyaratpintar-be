@@ -17,6 +17,7 @@ class Assessment extends Model
         'time_limit',
         'level',
         'mata_pelajaran_id',
+        'kelas_id',
     ];
 
     protected $casts = [
@@ -26,6 +27,11 @@ class Assessment extends Model
     public function mataPelajaran(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id');
+    }
+
+    public function kelas(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Kelas::class);
     }
 
     // Relationships

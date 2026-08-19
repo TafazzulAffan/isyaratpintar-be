@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Enums\AssessmentAttemptStatus;
+use App\Events\Assessment\AssessmentStarted;
+use App\Events\Assessment\AttemptCompleted;
+use App\Events\Assessment\AttemptTimedOut;
 use App\Models\Assessment;
 use App\Models\AssessmentAttempt;
 use App\Models\User;
@@ -12,6 +15,17 @@ use Illuminate\Database\Eloquent\Collection;
 class AttemptService
 {
     /**
+     * Get user's active assessment attempt
+     */
+    public function getActiveAttempt(User $user, Assessment $assessment): ?AssessmentAttempt
+    {
+        return AssessmentAttempt::where('user_id', $user->id)
+            ->where('assessment_id', $assessment->id)
+            ->where('status', AssessmentAttemptStatus::IN_PROGRESS)
+            ->first();
+    }
+
+    /**
      * Start a new assessment attempt
      *
      * @throws \Exception
@@ -19,22 +33,24 @@ class AttemptService
     public function startAttempt(User $user, Assessment $assessment): AssessmentAttempt
     {
         // Check if user already has active attempt
-        $activeAttempt = AssessmentAttempt::where('user_id', $user->id)
-            ->where('assessment_id', $assessment->id)
-            ->where('status', AssessmentAttemptStatus::IN_PROGRESS)
-            ->first();
+        $activeAttempt = $this->getActiveAttempt($user, $assessment);
 
         if ($activeAttempt) {
             throw new \Exception('User already has an active attempt for this assessment');
         }
 
         // Create new attempt
-        return AssessmentAttempt::create([
+        $attempt = AssessmentAttempt::create([
             'user_id' => $user->id,
             'assessment_id' => $assessment->id,
             'status' => AssessmentAttemptStatus::IN_PROGRESS,
             'started_at' => now(),
         ]);
+
+        // 🔥 DISPATCH EVENT
+        event(new AssessmentStarted($attempt));
+
+        return $attempt;
     }
 
     /**
@@ -79,6 +95,10 @@ class AttemptService
                 'status' => AssessmentAttemptStatus::TIMEOUT,
                 'completed_at' => now(),
             ]);
+
+            // 🔥 DISPATCH TIMEOUT EVENT
+            event(new AttemptTimedOut($attempt));
+
             throw new \Exception('Attempt has timed out');
         }
 
@@ -94,6 +114,9 @@ class AttemptService
             'status' => AssessmentAttemptStatus::COMPLETED,
             'completed_at' => now(),
         ]);
+
+        // 🔥 DISPATCH COMPLETION EVENT
+        event(new AttemptCompleted($attempt));
 
         return $attempt;
     }

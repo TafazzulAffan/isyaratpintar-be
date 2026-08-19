@@ -18,6 +18,7 @@ class PblCase extends Model
         'case_number',
         'title',
         'mata_pelajaran_id',
+        'kelas_id',
         'description',
         'image_url',
         'time_limit',
@@ -37,6 +38,11 @@ class PblCase extends Model
     public function mataPelajaran(): BelongsTo
     {
         return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id');
+    }
+
+    public function kelas(): BelongsTo
+    {
+        return $this->belongsTo(Kelas::class);
     }
 
     /**

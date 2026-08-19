@@ -23,6 +23,9 @@ class PblCaseResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Format image_url menjadi path relatif (contoh: /pbl/abc.png)
+        $imageUrl = $this->formatImageUrl($this->image_url);
+
         $data = [
             'id' => $this->id,
             'slug' => $this->slug,
@@ -30,19 +33,39 @@ class PblCaseResource extends JsonResource
             'title' => $this->title,
             'mata_pelajaran_id' => $this->mata_pelajaran_id,
             'description' => $this->description,
-            'image_url' => $this->image_url,
+            'image_url' => $imageUrl,
             'time_limit' => $this->time_limit,
             'start_date' => $this->start_date,
             'deadline' => $this->deadline,
             'mata_pelajaran' => new MataPelajaranResource($this->whenLoaded('mataPelajaran')),
         ];
 
-        // Add status if user is provided or in request context
         if ($this->user || auth()->check()) {
             $user = $this->user ?? auth()->user();
             $data['status'] = PblCaseStatusService::getStatusString($this->resource, $user);
         }
 
         return $data;
+    }
+
+    /**
+     * Format image URL to relative path (e.g., /pbl/filename.png)
+     */
+    private function formatImageUrl(?string $url): ?string
+    {
+        if (!$url) {
+            return null;
+        }
+
+        // Jika sudah berupa path relatif (tidak mengandung http)
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            return '/' . ltrim($url, '/');
+        }
+
+        // Ekstrak path dari URL lengkap
+        $path = parse_url($url, PHP_URL_PATH);
+        // Hapus prefix /storage/ atau /api/storage/ -> menghasilkan /pbl/...
+        $relative = preg_replace('#^/(api/)?storage/#', '/', $path);
+        return $relative;
     }
 }

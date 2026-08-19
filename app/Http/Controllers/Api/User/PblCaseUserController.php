@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PblCaseDetailResource;
 use App\Http\Resources\PblCaseResource;
 use App\Models\PblCase;
+use App\Services\KelasAccessService;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -16,6 +17,9 @@ use Illuminate\Http\JsonResponse;
  */
 class PblCaseUserController extends Controller
 {
+    public function __construct(
+        private KelasAccessService $kelasAccessService
+    ) {}
     /**
      * @OA\Get(
      *     path="/pbl-cases",
@@ -64,10 +68,11 @@ class PblCaseUserController extends Controller
     {
         $user = auth()->user();
         
-        $query = PblCase::with('mataPelajaran')
-            ->orderBy('start_date', 'asc');
+        $query = $this->kelasAccessService->scopeContentQuery(
+            PblCase::with('mataPelajaran')->orderBy('start_date', 'asc'),
+            $user
+        );
 
-        // Filter by mata_pelajaran if provided
         if (request()->has('mata_pelajaran_id')) {
             $query->where('mata_pelajaran_id', request()->input('mata_pelajaran_id'));
         }
@@ -134,6 +139,8 @@ class PblCaseUserController extends Controller
      */
     public function show(PblCase $pblCase): JsonResponse
     {
+        $this->authorize('view', $pblCase);
+
         $pblCase->load('mataPelajaran', 'sections.items');
         return response()->json(new PblCaseDetailResource($pblCase));
     }
@@ -160,9 +167,11 @@ class PblCaseUserController extends Controller
     {
         $user = auth()->user();
 
-        $cases = PblCase::with('mataPelajaran')
-            ->where('mata_pelajaran_id', $id)
-            ->orderBy('start_date', 'asc')
+        $cases = $this->kelasAccessService
+            ->scopeContentQuery(
+                PblCase::with('mataPelajaran')->where('mata_pelajaran_id', $id)->orderBy('start_date', 'asc'),
+                $user
+            )
             ->paginate(15);
 
         $cases->getCollection()->transform(function ($case) use ($user) {

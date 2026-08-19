@@ -1,9 +1,10 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Skillbytes API - PBL Module",
-        "description": "REST API for Problem-Based Learning (PBL) Case Management System",
+        "title": "Skillbytes API",
+        "description": "Complete REST API for Skillbytes Learning Management System - includes PBL, Assessments, Tracking, and SPK modules",
         "contact": {
+            "name": "Skillbytes Support",
             "email": "support@skillbytes.com"
         },
         "license": {
@@ -107,6 +108,7 @@
                                 "required": [
                                     "slug",
                                     "mata_pelajaran_id",
+                                    "kelas_id",
                                     "title",
                                     "time_limit"
                                 ],
@@ -118,6 +120,11 @@
                                     },
                                     "mata_pelajaran_id": {
                                         "description": "Mata pelajaran ID - the assessment will be grouped under this subject",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "kelas_id": {
+                                        "description": "Kelas ID - the assessment will be grouped under this class",
                                         "type": "integer",
                                         "example": 1
                                     },
@@ -246,6 +253,11 @@
                                     },
                                     "mata_pelajaran_id": {
                                         "description": "Mata pelajaran ID - the assessment will be grouped under this subject",
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "kelas_id": {
+                                        "description": "Kelas ID - the assessment will be grouped under this class",
                                         "type": "integer",
                                         "nullable": true
                                     },
@@ -1340,6 +1352,7 @@
                                     "case_number",
                                     "title",
                                     "mata_pelajaran_id",
+                                    "kelas_id",
                                     "description",
                                     "start_date",
                                     "deadline"
@@ -1354,6 +1367,10 @@
                                         "example": "System Login Bermasalah"
                                     },
                                     "mata_pelajaran_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "kelas_id": {
                                         "type": "integer",
                                         "example": 1
                                     },
@@ -1578,6 +1595,9 @@
                                         "type": "string"
                                     },
                                     "mata_pelajaran_id": {
+                                        "type": "integer"
+                                    },
+                                    "kelas_id": {
                                         "type": "integer"
                                     },
                                     "deadline": {
@@ -1953,6 +1973,119 @@
                 ]
             }
         },
+        "/admin/spk/at-risk-students": {
+            "get": {
+                "tags": [
+                    "SPK - Admin"
+                ],
+                "summary": "Get students at risk that need attention",
+                "operationId": "7ec8435776ba066f1ebc7e8a84da0b4f",
+                "parameters": [
+                    {
+                        "name": "risk_level",
+                        "in": "query",
+                        "description": "Filter by risk level (critical, high, medium, low)"
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Sort by (risk_score, name, last_activity)"
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of at-risk students"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/spk/subject-performance": {
+            "get": {
+                "tags": [
+                    "SPK - Admin"
+                ],
+                "summary": "Get subject mastery statistics across all students",
+                "operationId": "55cd57503954e2930c1b2a785746ed1e",
+                "responses": {
+                    "200": {
+                        "description": "Subject performance statistics"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/spk/teacher-insights": {
+            "get": {
+                "tags": [
+                    "SPK - Admin"
+                ],
+                "summary": "Get teacher insights for monitoring",
+                "operationId": "d329302af91012b2cc4cbdc130aaf7bf",
+                "parameters": [
+                    {
+                        "name": "insight_type",
+                        "in": "query",
+                        "description": "Filter by insight type"
+                    },
+                    {
+                        "name": "acknowledged",
+                        "in": "query",
+                        "description": "Filter by acknowledgement status"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Teacher insights"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/spk/student/{studentId}/risk-profile": {
+            "get": {
+                "tags": [
+                    "SPK - Admin"
+                ],
+                "summary": "Get detailed risk profile for a specific student",
+                "operationId": "90b357676933542633e28c86e05c7a07",
+                "parameters": [
+                    {
+                        "name": "studentId",
+                        "in": "path",
+                        "description": "Student ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Student risk profile details"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/results": {
             "get": {
                 "tags": [
@@ -2087,6 +2220,151 @@
                     },
                     "404": {
                         "description": "Result not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/tracking/session/start": {
+            "post": {
+                "tags": [
+                    "Activity Tracking"
+                ],
+                "summary": "Start a learning session",
+                "operationId": "1af1320d39e40d5c3cf47a99ffd530e9",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "entity_type": {
+                                        "type": "string",
+                                        "example": "Lesson"
+                                    },
+                                    "entity_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Session started successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "session_started_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/tracking/session/end": {
+            "post": {
+                "tags": [
+                    "Activity Tracking"
+                ],
+                "summary": "End a learning session",
+                "operationId": "192b824162dd9b69b5254c980c41139c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "duration_seconds": {
+                                        "description": "Session duration in seconds",
+                                        "type": "integer",
+                                        "example": 3600
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Session ended successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/tracking/page-viewed": {
+            "post": {
+                "tags": [
+                    "Activity Tracking"
+                ],
+                "summary": "Track page view",
+                "operationId": "08b23fe469cf8934875b1d138119236f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "page_url": {
+                                        "type": "string",
+                                        "example": "/lessons/1"
+                                    },
+                                    "entity_type": {
+                                        "type": "string",
+                                        "example": "Lesson",
+                                        "nullable": true
+                                    },
+                                    "entity_id": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Page view tracked successfully"
                     }
                 },
                 "security": [
@@ -3057,6 +3335,216 @@
                 ]
             }
         },
+        "/me/spk/subject-mastery": {
+            "get": {
+                "tags": [
+                    "SPK - Student"
+                ],
+                "summary": "Get student's subject mastery levels",
+                "operationId": "fa66261a12d924608f3eb4177029a98e",
+                "responses": {
+                    "200": {
+                        "description": "Subject mastery data"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/me/spk/risk-profile": {
+            "get": {
+                "tags": [
+                    "SPK - Student"
+                ],
+                "summary": "Get student's risk profile",
+                "operationId": "6062004548fbb64dc5665b341f48cd0a",
+                "responses": {
+                    "200": {
+                        "description": "Student risk profile"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/me/spk/recommendations": {
+            "get": {
+                "tags": [
+                    "SPK - Student"
+                ],
+                "summary": "Get personalized learning recommendations",
+                "operationId": "dc4f57af8299da01a77c59f63ead905c",
+                "responses": {
+                    "200": {
+                        "description": "Personalized recommendations"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/me/spk/strengths-and-weaknesses": {
+            "get": {
+                "tags": [
+                    "SPK - Student"
+                ],
+                "summary": "Get summary of strengths and weaknesses",
+                "operationId": "e286fda70eee0445dd2fd5916511afdb",
+                "responses": {
+                    "200": {
+                        "description": "Strengths and weaknesses summary"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/me/activity-log": {
+            "get": {
+                "tags": [
+                    "Student Analytics"
+                ],
+                "summary": "Get student activity log",
+                "operationId": "72f018fda5f62218787869dff943d9c5",
+                "parameters": [
+                    {
+                        "name": "activity_type",
+                        "in": "query",
+                        "description": "Filter by activity type"
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Start date (Y-m-d)"
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "End date (Y-m-d)"
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Activity log retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/me/learning-stats": {
+            "get": {
+                "tags": [
+                    "Student Analytics"
+                ],
+                "summary": "Get student learning statistics",
+                "operationId": "1ad481b9aa0cfa74722250873fe88f85",
+                "parameters": [
+                    {
+                        "name": "days",
+                        "in": "query",
+                        "description": "Number of days to analyze (default 30)"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Learning statistics retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/me/session-history": {
+            "get": {
+                "tags": [
+                    "Student Analytics"
+                ],
+                "summary": "Get student session history",
+                "operationId": "0a736cffd07afbfaad4229666840c8ce",
+                "parameters": [
+                    {
+                        "name": "session_type",
+                        "in": "query",
+                        "description": "Filter by session type (learning, assessment)"
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Start date (Y-m-d)"
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "End date (Y-m-d)"
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Session history retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/me/daily-learning-breakdown": {
+            "get": {
+                "tags": [
+                    "Student Analytics"
+                ],
+                "summary": "Get daily learning time breakdown for charting",
+                "operationId": "2012d19fd1c816dc1ea674b74f2a55b2",
+                "parameters": [
+                    {
+                        "name": "days",
+                        "in": "query",
+                        "description": "Number of days to analyze (default 30)"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daily learning breakdown retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/auth/user/register": {
             "post": {
                 "tags": [
@@ -3314,6 +3802,574 @@
                 ]
             }
         },
+        "/kelas": {
+            "get": {
+                "tags": [
+                    "Kelas"
+                ],
+                "summary": "Get list of Kelas",
+                "description": "Retrieve paginated list of Kelas for the authenticated user",
+                "operationId": "getKelasList",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kelas retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Kelas"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Kelas"
+                ],
+                "summary": "Create a new Kelas",
+                "description": "Create a new Kelas (Admin/Guru only)",
+                "operationId": "storeKelas",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama"
+                                ],
+                                "properties": {
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Kelas 10 A"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Kelas created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kelas created successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Kelas"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/kelas/{kelas}": {
+            "get": {
+                "tags": [
+                    "Kelas"
+                ],
+                "summary": "Get Kelas details",
+                "description": "Retrieve details of a specific Kelas",
+                "operationId": "getKelasById",
+                "parameters": [
+                    {
+                        "name": "kelas",
+                        "in": "path",
+                        "description": "ID of the Kelas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kelas retrieved successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Kelas"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Kelas"
+                ],
+                "summary": "Update a Kelas",
+                "description": "Update details of an existing Kelas (Admin/Guru only)",
+                "operationId": "updateKelas",
+                "parameters": [
+                    {
+                        "name": "kelas",
+                        "in": "path",
+                        "description": "ID of the Kelas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Kelas 10 A Updated"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Kelas updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kelas updated successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Kelas"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Kelas"
+                ],
+                "summary": "Delete a Kelas",
+                "description": "Delete an existing Kelas (Admin/Guru only)",
+                "operationId": "deleteKelas",
+                "parameters": [
+                    {
+                        "name": "kelas",
+                        "in": "path",
+                        "description": "ID of the Kelas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Kelas deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kelas deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/kelas/{kelas}/siswa": {
+            "post": {
+                "tags": [
+                    "Kelas"
+                ],
+                "summary": "Add a student to Kelas",
+                "description": "Add a student to a specific Kelas (Admin/Guru only)",
+                "operationId": "addStudentToKelas",
+                "parameters": [
+                    {
+                        "name": "kelas",
+                        "in": "path",
+                        "description": "ID of the Kelas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Student added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Siswa berhasil ditambahkan ke kelas"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Kelas"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/kelas/{kelas}/siswa/{user}": {
+            "delete": {
+                "tags": [
+                    "Kelas"
+                ],
+                "summary": "Remove a student from Kelas",
+                "description": "Remove a student from a specific Kelas (Admin/Guru only)",
+                "operationId": "removeStudentFromKelas",
+                "parameters": [
+                    {
+                        "name": "kelas",
+                        "in": "path",
+                        "description": "ID of the Kelas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID of the User (Siswa)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Student removed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Siswa berhasil dihapus dari kelas"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Kelas"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/kelas/{kelas}/materi": {
+            "get": {
+                "tags": [
+                    "Kelas"
+                ],
+                "summary": "Get Materi for Kelas",
+                "description": "Retrieve all Lesson/Materi assigned to a specific Kelas",
+                "operationId": "getKelasMateri",
+                "parameters": [
+                    {
+                        "name": "kelas",
+                        "in": "path",
+                        "description": "ID of the Kelas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Materi kelas retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Lesson"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/kelas/{kelas}/tugas": {
+            "get": {
+                "tags": [
+                    "Kelas"
+                ],
+                "summary": "Get Tugas/PblCases for Kelas",
+                "description": "Retrieve all Tugas/PBL Cases assigned to a specific Kelas",
+                "operationId": "getKelasTugas",
+                "parameters": [
+                    {
+                        "name": "kelas",
+                        "in": "path",
+                        "description": "ID of the Kelas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tugas kelas retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PblCase"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/kelas/{kelas}/ujian": {
+            "get": {
+                "tags": [
+                    "Kelas"
+                ],
+                "summary": "Get Ujian/Assessments for Kelas",
+                "description": "Retrieve all Ujian/Assessments assigned to a specific Kelas",
+                "operationId": "getKelasUjian",
+                "parameters": [
+                    {
+                        "name": "kelas",
+                        "in": "path",
+                        "description": "ID of the Kelas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ujian kelas retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Assessment"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/lessons": {
             "get": {
                 "tags": [
@@ -3399,7 +4455,7 @@
                     "Lessons"
                 ],
                 "summary": "Create new lesson",
-                "description": "Create a new lesson. Only accessible to admin and guru roles.",
+                "description": "Create a new lesson. Only accessible to admin and guru roles. Use POST /lessons/{slug}/upload-file to upload lesson materials after creation.",
                 "operationId": "b196bee153377a601911ff0db5a9aa01",
                 "requestBody": {
                     "required": true,
@@ -3408,28 +4464,32 @@
                             "schema": {
                                 "required": [
                                     "title",
-                                    "slug",
-                                    "level_id"
+                                    "mata_pelajaran_id",
+                                    "kelas_id"
                                 ],
                                 "properties": {
                                     "title": {
                                         "description": "Lesson title",
                                         "type": "string"
                                     },
-                                    "slug": {
-                                        "description": "Unique slug",
-                                        "type": "string"
-                                    },
                                     "description": {
                                         "description": "Lesson description",
                                         "type": "string"
                                     },
-                                    "level_id": {
-                                        "description": "Level ID",
+                                    "mata_pelajaran_id": {
+                                        "description": "Mata Pelajaran ID",
                                         "type": "integer"
                                     },
-                                    "content": {
-                                        "description": "Lesson content",
+                                    "kelas_id": {
+                                        "description": "Kelas ID",
+                                        "type": "integer"
+                                    },
+                                    "duration": {
+                                        "description": "Lesson duration (minutes)",
+                                        "type": "string"
+                                    },
+                                    "resume": {
+                                        "description": "Lesson resume/summary",
                                         "type": "string"
                                     }
                                 },
@@ -3583,7 +4643,7 @@
                     "Lessons"
                 ],
                 "summary": "Update lesson",
-                "description": "Update an existing lesson. Use POST for form-data/file uploads. Only accessible to admin and guru roles.",
+                "description": "Update an existing lesson. Only accessible to admin and guru roles. Use POST /lessons/{slug}/upload-file to upload/update lesson materials.",
                 "operationId": "69936bffdef69b4a66f54d3bad82c0ff",
                 "parameters": [
                     {
@@ -3607,8 +4667,20 @@
                                         "description": "Updated description",
                                         "type": "string"
                                     },
-                                    "content": {
-                                        "description": "Updated content",
+                                    "mata_pelajaran_id": {
+                                        "description": "Mata Pelajaran ID",
+                                        "type": "integer"
+                                    },
+                                    "kelas_id": {
+                                        "description": "Kelas ID",
+                                        "type": "integer"
+                                    },
+                                    "duration": {
+                                        "description": "Duration in minutes",
+                                        "type": "string"
+                                    },
+                                    "resume": {
+                                        "description": "Updated resume/summary",
                                         "type": "string"
                                     }
                                 },
@@ -4973,6 +6045,102 @@
                 ]
             }
         },
+        "/auth/user/update-password/{id}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user password",
+                "description": "Update user password. Users can only change their own password, while admin can change any user's password.",
+                "operationId": "6ab55d3fb8a331746ca630c8477cb121",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Current and new password",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "old_password",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "old_password": {
+                                        "description": "Current password",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "oldpassword123"
+                                    },
+                                    "password": {
+                                        "description": "New password (min 8 characters)",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword456"
+                                    },
+                                    "password_confirmation": {
+                                        "description": "New password confirmation",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password updated successfully"
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error - old password incorrect or new password too short"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden - only admin or the user themselves can change password"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/lessons/{lesson}/mark-completed": {
             "post": {
                 "tags": [
@@ -5461,73 +6629,547 @@
     },
     "components": {
         "schemas": {
-            "CaseSubmission": {
-                "description": "PBL Case Submission resource",
+            "User": {
+                "description": "User resource",
                 "properties": {
                     "id": {
-                        "description": "Submission ID",
                         "type": "integer",
                         "example": 1
                     },
-                    "case_id": {
-                        "description": "PBL Case ID",
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john@example.com"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "admin",
+                            "guru",
+                            "siswa"
+                        ],
+                        "example": "siswa"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "MataPelajaran": {
+                "description": "Subject (Mata Pelajaran) resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Matematika"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Pelajaran Matematika"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Kelas": {
+                "description": "Kelas resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nama": {
+                        "type": "string",
+                        "example": "Kelas 10 A"
+                    },
+                    "guru_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "guru": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        ],
+                        "nullable": true,
+                        "type": "object"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Lesson": {
+                "description": "Lesson resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "mata_pelajaran_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "kelas_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Introduction to Functions"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "introduction-to-functions"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "resume": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "file_path": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResume": {
+                "description": "User Resume resource",
+                "properties": {
+                    "id": {
                         "type": "integer",
                         "example": 1
                     },
                     "user_id": {
-                        "description": "Student User ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "lesson_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "content": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "PblCase": {
+                "description": "PBL Case resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "mata_pelajaran_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "kelas_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "System Login Authentication Failed"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "system-login-authentication-failed"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deadline": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "CaseSection": {
+                "description": "PBL Case Section resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "pbl_case_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Problem Statement"
+                    },
+                    "order": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "CaseSectionItem": {
+                "description": "PBL Case Section Item resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "case_section_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "content": {
+                        "type": "string"
+                    },
+                    "order": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "CaseSubmission": {
+                "description": "PBL Case Submission resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "pbl_case_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
                         "type": "integer",
                         "example": 1
                     },
                     "answer": {
-                        "description": "Student's text answer",
                         "type": "string",
-                        "example": "This is my answer to the case...",
                         "nullable": true
                     },
                     "submission_file": {
-                        "description": "URL to the submission file",
                         "type": "string",
                         "format": "uri",
-                        "example": "http://localhost:8000/storage/submissions/pbl/file.pdf",
-                        "nullable": true
-                    },
-                    "submission_file_path": {
-                        "description": "Relative path to submission file",
-                        "type": "string",
-                        "example": "submissions/pbl/1716562200_1_abc123.pdf",
                         "nullable": true
                     },
                     "submitted_at": {
-                        "description": "Submission timestamp",
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-05-24T10:30:00Z"
+                        "format": "date-time"
                     },
                     "score": {
-                        "description": "Score given by teacher (0-100)",
                         "type": "number",
                         "format": "float",
-                        "example": 85.5,
                         "nullable": true
                     },
                     "feedback": {
-                        "description": "Feedback from teacher",
                         "type": "string",
-                        "example": "Good work, but needs more detail",
                         "nullable": true
                     },
                     "created_at": {
-                        "description": "Record creation timestamp",
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2026-05-24T10:30:00Z"
+                        "format": "date-time"
                     },
                     "updated_at": {
-                        "description": "Record last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Assessment": {
+                "description": "Assessment (Quiz/Exam) resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "mata_pelajaran_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "kelas_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Chapter 1 Quiz"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "chapter-1-quiz"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "duration": {
+                        "description": "Duration in minutes",
+                        "type": "integer",
+                        "example": 60
+                    },
+                    "passing_score": {
+                        "type": "integer",
+                        "example": 70
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Question": {
+                "description": "Assessment Question resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "assessment_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "question_text": {
+                        "type": "string"
+                    },
+                    "question_type": {
+                        "type": "string",
+                        "enum": [
+                            "multiple_choice",
+                            "essay"
+                        ],
+                        "example": "multiple_choice"
+                    },
+                    "order": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Option": {
+                "description": "Question Option resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "question_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "option_text": {
+                        "type": "string",
+                        "example": "Option A"
+                    },
+                    "is_correct": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "order": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "AssessmentAttempt": {
+                "description": "Assessment Attempt resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "assessment_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "started_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "finished_at": {
                         "type": "string",
                         "format": "date-time",
-                        "example": "2026-05-24T11:45:00Z"
+                        "nullable": true
+                    },
+                    "score": {
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "started",
+                            "finished"
+                        ],
+                        "example": "started"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "AuthToken": {
+                "description": "Authentication token response",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "example": "1|abcdefghijklmnopqrstuvwxyz123456"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorResponse": {
+                "description": "Error response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Error message"
+                    },
+                    "errors": {
+                        "type": "object",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessResponse": {
+                "description": "Generic success response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success message"
+                    },
+                    "data": {
+                        "type": "object",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -5536,8 +7178,8 @@
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
-                "description": "Bearer token for API authentication",
-                "bearerFormat": "JWT",
+                "description": "Bearer token for API authentication using Laravel Sanctum",
+                "bearerFormat": "Bearer Token (Sanctum)",
                 "scheme": "bearer"
             }
         }
@@ -5576,6 +7218,10 @@
             "description": "Debug endpoints for troubleshooting submission data issues"
         },
         {
+            "name": "Kelas",
+            "description": "Manage Kelas (Class) resources"
+        },
+        {
             "name": "Assessments",
             "description": "Assessments"
         },
@@ -5588,8 +7234,16 @@
             "description": "Questions"
         },
         {
+            "name": "SPK - Admin",
+            "description": "SPK - Admin"
+        },
+        {
             "name": "Results",
             "description": "Results"
+        },
+        {
+            "name": "Activity Tracking",
+            "description": "Activity Tracking"
         },
         {
             "name": "Assessment Attempts",
@@ -5598,6 +7252,14 @@
         {
             "name": "PBL Submissions - Grading",
             "description": "PBL Submissions - Grading"
+        },
+        {
+            "name": "SPK - Student",
+            "description": "SPK - Student"
+        },
+        {
+            "name": "Student Analytics",
+            "description": "Student Analytics"
         },
         {
             "name": "Authentication",

@@ -95,6 +95,7 @@ class CaseSubmissionController extends Controller
             $validated = $request->validated();
             
             $case = PblCase::findOrFail($validated['case_id']);
+            $this->authorize('view', $case);
 
             // Check if already submitted
             $existingSubmission = CaseSubmission::where('user_id', $user->id)
@@ -223,8 +224,13 @@ class CaseSubmissionController extends Controller
             }
 
             // Get all submissions (not filtered by user_id) with proper eager loading
-            $submissions = CaseSubmission::with('pblCase')
-                ->orderBy('submitted_at', 'desc')
+            $query = CaseSubmission::with('pblCase');
+
+            if (request()->has('pbl_case_id')) {
+                $query->where('case_id', request('pbl_case_id'));
+            }
+
+            $submissions = $query->orderBy('submitted_at', 'desc')
                 ->paginate(15);
 
             return response()->json(CaseSubmissionResource::collection($submissions));
@@ -387,6 +393,12 @@ class CaseSubmissionController extends Controller
                 return response()->json([
                     'message' => 'Failed to save grading. Please try again.',
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            // If a score was given/updated, trigger SPK recalculation for this subject
+            if (array_key_exists('score', $validated)) {
+                dispatch(new \App\Jobs\CalculateSubjectMasteryFromTaskJob($caseSubmission->id))
+                    ->onQueue('default');
             }
 
             $caseSubmission->refresh();

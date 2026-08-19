@@ -5,17 +5,23 @@ namespace App\Services;
 use App\Enums\AssessmentAttemptStatus;
 use App\Models\Assessment;
 use App\Models\AssessmentAttempt;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class AssessmentService
 {
+    public function __construct(
+        private KelasAccessService $kelasAccessService
+    ) {}
+
     /**
      * Get all assessments with count of questions
      */
-    public function getAllAssessments(): LengthAwarePaginator
+    public function getAllAssessments(?User $user = null): LengthAwarePaginator
     {
-        return Assessment::withCount('questions')
+        return $this->kelasAccessService
+            ->scopeContentQuery(Assessment::withCount('questions'), $user)
             ->latest()
             ->paginate(15);
     }
@@ -23,10 +29,13 @@ class AssessmentService
     /**
      * Get assessments filtered by mata_pelajaran id
      */
-    public function getAssessmentsByMataPelajaranId(int $id): LengthAwarePaginator
+    public function getAssessmentsByMataPelajaranId(int $id, ?User $user = null): LengthAwarePaginator
     {
-        return Assessment::withCount('questions')
-            ->where('mata_pelajaran_id', $id)
+        return $this->kelasAccessService
+            ->scopeContentQuery(
+                Assessment::withCount('questions')->where('mata_pelajaran_id', $id),
+                $user
+            )
             ->latest()
             ->paginate(15);
     }
@@ -34,19 +43,27 @@ class AssessmentService
     /**
      * Get assessment by slug with questions and options
      */
-    public function getAssessmentBySlug(string $slug): ?Assessment
+    public function getAssessmentBySlug(string $slug, ?User $user = null): ?Assessment
     {
-        return Assessment::where('slug', $slug)
-            ->with(['questions.options'])
+        return $this->kelasAccessService
+            ->scopeContentQuery(
+                Assessment::where('slug', $slug)->with(['questions.options']),
+                $user
+            )
             ->first();
     }
 
     /**
      * Get assessment by ID
      */
-    public function getAssessmentById(int $id): ?Assessment
+    public function getAssessmentById(int $id, ?User $user = null): ?Assessment
     {
-        return Assessment::with(['questions.options'])->find($id);
+        return $this->kelasAccessService
+            ->scopeContentQuery(
+                Assessment::with(['questions.options'])->where('id', $id),
+                $user
+            )
+            ->first();
     }
 
     /**

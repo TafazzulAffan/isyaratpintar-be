@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\KelasAccessibleByGuru;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAssessmentRequest extends FormRequest
@@ -23,6 +24,8 @@ class UpdateAssessmentRequest extends FormRequest
     {
         return [
             'slug' => 'sometimes|required|string|unique:assessments,slug,' . $this->route('id'),
+            'kelas_id' => ['sometimes', 'integer', 'exists:kelas,id', new KelasAccessibleByGuru()],
+            'mata_pelajaran_id' => 'sometimes|integer|exists:mata_pelajarans,id',
             'title' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
             'time_limit' => 'sometimes|required|integer|min:1',

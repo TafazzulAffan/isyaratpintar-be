@@ -86,6 +86,43 @@ class User extends Authenticatable
         return $this->hasMany(UserResume::class);
     }
 
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(StudentActivityLog::class);
+    }
+
+    public function sessionDurations(): HasMany
+    {
+        return $this->hasMany(SessionDuration::class);
+    }
+
+    public function subjectMastery(): HasMany
+    {
+        return $this->hasMany(SubjectMastery::class);
+    }
+
+    public function riskProfile()
+    {
+        return $this->hasOne(StudentRiskProfile::class);
+    }
+
+    public function teacherInsights(): HasMany
+    {
+        return $this->hasMany(TeacherInsight::class, 'student_id');
+    }
+
+    public function kelasDibuat(): HasMany
+    {
+        return $this->hasMany(Kelas::class, 'guru_id');
+    }
+
+    public function kelasDiikuti(): BelongsToMany
+    {
+        return $this->belongsToMany(Kelas::class, 'kelas_siswa')
+            ->withPivot('enrolled_at')
+            ->withTimestamps();
+    }
+
     // Helper methods for role checking
     public function isAdmin(): bool
     {

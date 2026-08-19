@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\KelasAccessibleByGuru;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateLessonRequest extends FormRequest
@@ -14,27 +15,25 @@ class UpdateLessonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'level_id' => ['sometimes', 'integer', 'exists:levels,id'],
+            'kelas_id' => ['sometimes', 'integer', 'exists:kelas,id', new KelasAccessibleByGuru()],
+            'mata_pelajaran_id' => ['sometimes', 'integer', 'exists:mata_pelajarans,id'],
             'title' => ['sometimes', 'string', 'max:255'],
             'description' => ['sometimes', 'string'],
             'duration' => ['nullable', 'string', 'max:100'],
-            'pdf_file' => ['sometimes', 'file', 'mimes:pdf', 'max:10240'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'pdf_file.file' => 'File materi harus berupa file yang valid.',
-            'pdf_file.mimes' => 'File materi harus berformat PDF.',
-            'pdf_file.max' => 'Ukuran file materi maksimal 10MB.',
+            'mata_pelajaran_id.exists' => 'Mata pelajaran yang dipilih tidak ditemukan.',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'pdf_file' => 'file materi',
+            'mata_pelajaran_id' => 'mata pelajaran',
         ];
     }
 }

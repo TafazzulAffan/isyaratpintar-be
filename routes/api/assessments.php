@@ -7,12 +7,16 @@ use App\Http\Controllers\Api\ResultController;
 use App\Http\Controllers\Api\User\AssessmentController;
 use Illuminate\Support\Facades\Route;
 
+// Public assessment browsing endpoints
+Route::prefix('assessments')->controller(AssessmentController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::get('/mata-pelajaran/{id}', 'byMataPelajaran');
+    Route::get('/{slug}', 'show');
+});
+
 Route::middleware('auth:sanctum')->group(function () {
-    // Student endpoints (public for authenticated students)
+    // Student assessment attempt endpoints
     Route::prefix('assessments')->controller(AssessmentController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::get('/mata-pelajaran/{id}', 'byMataPelajaran');
-        Route::get('/{slug}', 'show');
         Route::post('/{id}/start', 'start');
         Route::post('/{attemptId}/answers', 'submitAnswer');
         Route::post('/{attemptId}/finish', 'finishAttempt');

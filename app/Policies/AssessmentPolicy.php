@@ -5,52 +5,47 @@ namespace App\Policies;
 use App\Enums\UserRole;
 use App\Models\Assessment;
 use App\Models\User;
+use App\Services\KelasAccessService;
 
 class AssessmentPolicy
 {
-    /**
-     * Determine whether the user can view any model.
-     */
+    public function __construct(
+        private KelasAccessService $kelasAccessService
+    ) {}
+
     public function viewAny(User $user): bool
     {
         return true;
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
     public function view(User $user, Assessment $assessment): bool
     {
-        return true;
+        return $this->kelasAccessService->canAccessContentWithKelas($user, $assessment->kelas_id);
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
     public function create(User $user): bool
     {
         return $user->role === UserRole::ADMIN || $user->role === UserRole::GURU;
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
     public function update(User $user, Assessment $assessment): bool
     {
-        return $user->role === UserRole::ADMIN || $user->role === UserRole::GURU;
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        if (!$user->isGuru() || !$assessment->kelas_id) {
+            return false;
+        }
+
+        return $assessment->kelas?->guru_id === $user->id;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
     public function delete(User $user, Assessment $assessment): bool
     {
-        return $user->role === UserRole::ADMIN || $user->role === UserRole::GURU;
+        return $this->update($user, $assessment);
     }
 
-    /**
-     * Determine whether the user can view results.
-     */
     public function viewResults(User $user): bool
     {
         return $user->role === UserRole::ADMIN || $user->role === UserRole::GURU;

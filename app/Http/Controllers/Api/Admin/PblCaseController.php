@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePblCaseRequest;
 use App\Http\Requests\UpdatePblCaseRequest;
@@ -32,10 +31,11 @@ class PblCaseController extends Controller
      *         required=true,
      *         description="PBL case data",
      *         @OA\JsonContent(
-     *             required={"case_number","title","mata_pelajaran_id","description","start_date","deadline"},
+     *             required={"case_number","title","mata_pelajaran_id","kelas_id","description","start_date","deadline"},
      *             @OA\Property(property="case_number", type="integer", example=1),
      *             @OA\Property(property="title", type="string", example="System Login Bermasalah"),
      *             @OA\Property(property="mata_pelajaran_id", type="integer", example=1),
+     *             @OA\Property(property="kelas_id", type="integer", example=1),
      *             @OA\Property(property="description", type="string", example="Anda diminta untuk menyelesaikan..."),
      *             @OA\Property(property="time_limit", type="integer", example=120),
      *             @OA\Property(property="start_date", type="string", format="date-time"),
@@ -59,14 +59,7 @@ class PblCaseController extends Controller
      */
     public function store(StorePblCaseRequest $request): JsonResponse
     {
-        $user = auth()->user();
-        
-        // Check authorization
-        if (!$user || !in_array($user->role, [UserRole::ADMIN, UserRole::GURU], true)) {
-            return response()->json([
-                'message' => 'Unauthorized - Only Admin and Guru can create cases',
-            ], Response::HTTP_FORBIDDEN);
-        }
+        $this->authorize('create', PblCase::class);
 
         $validated = $request->validated();
         
@@ -102,6 +95,7 @@ class PblCaseController extends Controller
      *             @OA\Property(property="title", type="string"),
      *             @OA\Property(property="description", type="string"),
      *             @OA\Property(property="mata_pelajaran_id", type="integer"),
+     *             @OA\Property(property="kelas_id", type="integer"),
      *             @OA\Property(property="deadline", type="string", format="date-time"),
      *         )
      *     ),
@@ -117,14 +111,7 @@ class PblCaseController extends Controller
      */
     public function update(UpdatePblCaseRequest $request, PblCase $pblCase): JsonResponse
     {
-        $user = auth()->user();
-        
-        // Check authorization
-        if (!$user || !in_array($user->role, [UserRole::ADMIN, UserRole::GURU], true)) {
-            return response()->json([
-                'message' => 'Unauthorized - Only Admin and Guru can update cases',
-            ], Response::HTTP_FORBIDDEN);
-        }
+        $this->authorize('update', $pblCase);
 
         $pblCase->update($request->validated());
 
@@ -160,14 +147,7 @@ class PblCaseController extends Controller
      */
     public function destroy(PblCase $pblCase): JsonResponse
     {
-        $user = auth()->user();
-        
-        // Check authorization
-        if (!$user || !in_array($user->role, [UserRole::ADMIN, UserRole::GURU], true)) {
-            return response()->json([
-                'message' => 'Unauthorized - Only Admin and Guru can delete cases',
-            ], Response::HTTP_FORBIDDEN);
-        }
+        $this->authorize('delete', $pblCase);
 
         $pblCase->delete();
 

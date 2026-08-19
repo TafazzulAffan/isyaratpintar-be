@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\KelasAccessibleByGuru;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePblCaseRequest extends FormRequest
@@ -37,6 +38,7 @@ class UpdatePblCaseRequest extends FormRequest
         
         return [
             'title' => 'sometimes|string|max:255',
+            'kelas_id' => ['sometimes', 'integer', 'exists:kelas,id', new KelasAccessibleByGuru()],
             'mata_pelajaran_id' => 'sometimes|integer|exists:mata_pelajarans,id',
             'description' => 'sometimes|string',
             'image_url' => 'nullable|url',
