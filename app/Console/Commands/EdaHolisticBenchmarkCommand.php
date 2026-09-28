@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\UserRole;
 use App\Events\Assessment\AnswerSubmitted;
 use App\Events\Assessment\AssessmentStarted;
 use App\Events\Assessment\AttemptCompleted;
@@ -37,9 +38,18 @@ class EdaHolisticBenchmarkCommand extends Command
         $this->components->info("╚══════════════════════════════════════════════════════════════╝");
         $this->newLine();
 
-        $student = User::where('email', 'benchmark@example.com')->first();
+        $student = User::where('email', 'benchmark@example.com')
+            ->whereHas('assessmentAttempts', fn($q) => $q->where('status', 'COMPLETED'))
+            ->first();
+
         if (!$student) {
-            $this->components->error("Data siswa benchmark tidak ditemukan. Jalankan seeder.");
+            $student = User::where('role', UserRole::SISWA)
+                ->whereHas('assessmentAttempts', fn($q) => $q->where('status', 'COMPLETED'))
+                ->first();
+        }
+
+        if (!$student) {
+            $this->components->error("Data siswa dengan assessment completed tidak ditemukan. Jalankan seeder.");
             return Command::FAILURE;
         }
 

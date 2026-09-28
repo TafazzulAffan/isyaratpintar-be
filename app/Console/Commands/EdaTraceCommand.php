@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\UserRole;
 use App\Events\Assessment\AttemptCompleted;
 use App\Models\AssessmentAttempt;
 use App\Models\User;
@@ -31,7 +32,14 @@ class EdaTraceCommand extends Command
             ->first();
 
         if (!$student) {
-            $this->components->error("Data siswa benchmark tidak ditemukan. Jalankan benchmark seeder terlebih dahulu.");
+            // Fallback ke siswa mana saja yang memiliki assessment attempt completed
+            $student = User::where('role', UserRole::SISWA)
+                ->whereHas('assessmentAttempts', fn($q) => $q->where('status', 'COMPLETED'))
+                ->first();
+        }
+
+        if (!$student) {
+            $this->components->error("Data siswa dengan assessment completed tidak ditemukan. Jalankan seeder terlebih dahulu (php artisan db:seed).");
             return Command::FAILURE;
         }
 
